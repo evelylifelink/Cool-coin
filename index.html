@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>orange 🍊</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <style>
+        :root {
+            --font-family: 'Poppins', sans-serif;
+            --primary-color: #FFD700; --secondary-color: #FFA500;
+            --background-dark: #000000; --surface-dark: #1a1a1a;
+            --text-primary-dark: #FFFFFF; --text-secondary-dark: #CCCCCC;
+            --border-dark: #333333; --accent-color: #FFD700;
+            --success: #27AE60; --danger: #C0392B; --pending: #F39C12;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-family); background-color: var(--background-dark); color: var(--text-primary-dark); -webkit-font-smoothing: antialiased; }
+        #app { max-width: 500px; margin: 0 auto; padding-bottom: 80px; background-color: var(--background-dark); }
+        .page { display: none; padding: 15px; }
+        .page.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .profile-header {
+            padding: 25px 15px; border-bottom: 1px solid var(--border-dark);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+        #user-photo { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; margin-bottom: 10px; }
+        #user-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+        .wallet-container { display: flex; gap: 15px; margin: 15px 0; width: 100%; }
+        .wallet-card { flex: 1; padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
+        .wallet-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
+        .wallet-card p { font-size: 1.4rem; font-weight: 600; color: var(--primary-color); }
+
+        .referral-section { padding: 20px; border-radius: 12px; margin: 20px 0; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
+        .referral-section h3 { color: var(--primary-color); margin-bottom: 10px; }
+        .referral-input { display: flex; margin: 15px 0; }
+        .referral-input input { flex: 1; padding: 12px; border: 1px solid var(--border-dark); border-radius: 8px 0 0 8px; background: #1a1a1a; color: white; outline: none; }
+        .referral-input button { padding: 12px 15px; background: var(--primary-color); color: #000; border: none; font-weight: 600; cursor: pointer; }
+        .referral-input .copy-btn { border-radius: 0; }
+        .referral-input .share-btn { border-radius: 0 8px 8px 0; }
+        
+        .premium-ad-box { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; background: linear-gradient(135deg, #3a3200 0%, #2b2300 100%); border: 1px solid var(--primary-color); text-decoration: none; color: white; }
+        .premium-ad-box .icon { font-size: 1.8rem; color: var(--primary-color); }
+        .premium-ad-box .text h4 { margin: 0; font-size: 1rem; }
+        .premium-ad-box .text p { margin: 0; font-size: 0.8rem; opacity: 0.8; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-card { padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
+        .stat-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
+        .stat-card p { font-size: 1.4rem; font-weight: 600; color: var(--primary-color); }
+        
+        .task-container { padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
+        .task-icon-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+        .task-info { flex: 1; }
+        .task-info h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
+        .task-info p { font-size: 0.85rem; color: var(--text-secondary-dark); }
+        .action-btn { padding: 10px 20px; font-size: 0.9rem; font-weight: 600; color: #000; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); white-space: nowrap; }
+        .action-btn:disabled { background: #666; cursor: not-allowed; color: #999; }
+
+        .progress-container { margin-bottom: 20px; }
+        .progress-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; font-weight: 500; }
+        .progress-bar-bg { width: 100%; height: 10px; border-radius: 5px; background-color: #333; }
+        .progress-bar-fg { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); transition: width 0.3s ease; }
+        
+        /* History Item Design */
+        .history-list .history-item {
+            background: var(--surface-dark); border: 1px solid var(--border-dark);
+            border-radius: 12px; padding: 15px; margin-bottom: 12px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .history-item .history-header { display: flex; justify-content: space-between; align-items: center; }
+        .history-header .transaction-id { font-size: 0.9rem; font-weight: 600; color: var(--primary-color); }
+        .history-status { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; text-transform: capitalize; }
+        .status-completed { background-color: var(--success); } .status-pending { background-color: var(--pending); } .status-rejected { background-color: var(--danger); }
+        .history-item .history-body { display: flex; justify-content: space-between; align-items: center; }
+        .history-body .details p { margin: 0; font-size: 1rem; font-weight: 500; }
+        .history-body .details small { color: var(--text-secondary-dark); font-size: 0.8rem; }
+        .history-body .amount { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
+        .history-list .task-history-item .details p { font-size: 0.9rem; } /* Specific for tasks */
+
+        .withdraw-form { padding: 20px; border-radius: 12px; margin: 20px 0; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
+        .withdraw-form h3 { color: var(--primary-color); margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 15px; }
+        .popup-content { padding: 30px; border-radius: 15px; text-align: center; max-width: 90%; background: var(--surface-dark); border: 1px solid var(--border-dark); }
+        .popup-content h2 { margin-bottom: 15px; color: var(--primary-color); } .popup-content p { margin-bottom: 20px; }
+        .popup-close-btn { padding: 12px 25px; border: none; border-radius: 8px; color: #000; background: var(--primary-color); font-weight: 600; cursor: pointer; width: 100%; }
+        .popup-loader .spinner { width: 40px; height: 40px; border-radius: 50%; border: 4px solid; border-color: var(--primary-color) transparent; animation: spin 1s linear infinite; margin: 0 auto 15px;}
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        #app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #000; }
+        #app-loader .spinner { width: 50px; height: 50px; border-radius: 50%; border: 5px solid; border-color: var(--primary-color) transparent; animation: spin 1s linear infinite; }
+        #loading-progress { margin-top: 15px; font-size: 1.2rem; font-weight: 600; color: var(--primary-color); }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 500px; margin: 0 auto; display: flex; justify-content: space-around; padding: 10px 0; background: #1a1a1a; border-top: 1px solid var(--border-dark); z-index: 100; }
+        .nav-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-family: var(--font-family); font-size: 0.75rem; color: var(--text-secondary-dark); transition: color 0.2s; flex-grow: 1; }
+        .nav-btn i { font-size: 1.5rem; margin-bottom: 4px; } 
+        .nav-btn.active { color: var(--primary-color); }
+
+        /* Super Task Styles */
+        .super-task-card {
+            background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px;
+            overflow: hidden; border: 1px solid var(--border-dark);
+        }
+        .super-task-card img.task-banner {
+            width: 100%; height: 120px; object-fit: cover;
+        }
+        .super-task-card .task-content { padding: 15px; }
+        .super-task-card .task-content h3 { color: var(--primary-color); margin-bottom: 8px; }
+        .task-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 0.9rem; }
+        .task-meta .reward { font-weight: 700; color: var(--success); }
+        .task-meta .limit { font-weight: 500; color: var(--text-secondary-dark); }
+        .task-view-btn { width: 100%; margin-top: 15px; }
+
+        #super-task-detail-view { display: none; }
+    </style>
+</head>
+<body>
+    <div id="app-loader"><div class="spinner"></div><p id="loading-progress">0%</p></div>
+    <div id="popup" class="popup-overlay"><div class="popup-content"><div id="popup-body"></div></div></div>
+
+    <div id="app" style="display: none;">
+        <header class="profile-header">
+            <img id="user-photo" src="https://via.placeholder.com/80" alt="User">
+            <h1 id="user-name">Loading...</h1>
+            <div class="wallet-container">
+                <div class="wallet-card">
+                    <h3>Main Balance</h3>
+                    <p><span id="user-balance">0.00</span></p>
+                </div>
+                <div class="wallet-card">
+                    <h3>Earning Wallet</h3>
+                    <p><span id="earning-wallet-balance">0.00</span></p>
+                </div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <div id="home-page" class="page active">
+                <div id="home-referral-section"></div>
+                <div id="home-premium-ad-section" style="margin-top: 20px;"></div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Today's Ads</h3><p id="daily-ads-watched">0 / 0</p></div>
+                    <div class="stat-card"><h3>Total Referrals</h3><p id="referral-count">0</p></div>
+                    <div class="stat-card"><h3>Total Ads Watched</h3><p id="total-ads-watched">0</p></div>
+                    <div class="stat-card"><h3>Total Income</h3><p id="total-earned">0.00</p></div>
+                </div>
+                <div id="dynamic-links-container" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="tasks-page" class="page">
+                <div class="task-container">
+                    <div class="task-info">
+                        <h3>Earning Wallet</h3>
+                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin: 10px 0;"><span id="earning-wallet-balance-display">0.00</span> TK</p>
+                        <small>Minimum 100 TK to move to main balance.</small>
+                    </div>
+                    <button id="move-to-balance-btn" class="action-btn" style="margin-left: auto;" disabled>Move</button>
+                </div>
+                
+                <div id="ad-progress-container" class="progress-container" style="margin-top:20px;"></div>
+                <div id="ad-task-container"></div>
+                
+                <h2 style="color: var(--primary-color); margin-top: 25px; margin-bottom: 10px;">Bonus Tasks</h2>
+                <div id="dynamic-tasks-container"></div>
+            </div>
+
+            <div id="super-tasks-page" class="page">
+                <div id="super-task-list-view">
+                    <h2 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;">Super Tasks</h2>
+                    <div id="super-tasks-container"></div>
+                </div>
+                <div id="super-task-detail-view">
+                    <!-- Dynamic content here -->
+                </div>
+            </div>
+
+            <div id="profile-page" class="page">
+                 <div id="withdraw-section"></div>
+
+                 <div id="withdrawal-history-section" style="margin-top: 20px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 10px;">Withdrawal History</h2>
+                    <div id="withdrawal-history-list" class="history-list"></div>
+                 </div>
+
+                 <div id="super-task-history-section" style="margin-top: 20px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 10px;">Super Task History</h2>
+                    <div id="super-task-history-list" class="history-list"></div>
+                 </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-page="home-page"><i class="fas fa-home"></i><span>Home</span></button>
+            <button class="nav-btn" data-page="tasks-page"><i class="fas fa-tasks"></i><span>Tasks</span></button>
+            <button class="nav-btn" data-page="super-tasks-page"><i class="fas fa-rocket"></i><span>Super Tasks</span></button>
+            <button class="nav-btn" data-page="profile-page"><i class="fas fa-user-alt"></i><span>Profile</span></button>
+        </nav>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Existing code from original file ---
+        const tg = window.Telegram.WebApp;
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-Q0i3494RYdr6i_H43klTP0B7VSfKkyY",
+            authDomain: "evaly-life.firebaseapp.com",
+            databaseURL: "https://evaly-life-default-rtdb.firebaseio.com",
+            projectId: "evaly-life",
+            storageBucket: "evaly-life.firebasestorage.app",
+            messagingSenderId: "918431590591",
+            appId: "1:918431590591:web:f0234aba74a96d24e77e0a",
+            measurementId: "G-JM31ZZ88LP"
+        };
+        
+        let appConfig = {}; let userState = {}; let tgUser = {}; let earningWalletBalance = 0;
+        let userTransactions = [];
+        let userSuperTaskSubmissions = [];
+
+        const popup = document.getElementById('popup');
+        const popupBody = document.getElementById('popup-body');
+        const loadingProgress = document.getElementById('loading-progress');
+
+        const showPopup = (content, closable = true) => {
+            popupBody.innerHTML = content;
+            popup.style.display = 'flex';
+            if (!closable) {
+                const closeButton = popup.querySelector('.popup-close-btn');
+                if (closeButton) closeButton.style.display = 'none';
+            }
+        };
+        const closePopup = () => { popup.style.display = 'none'; };
+        const updateProgress = (percentage) => { loadingProgress.textContent = `${percentage}%`; };
+
+        const loadAdSdk = (zoneId) => {
+            if (!zoneId) { console.error("Ad Zone ID is missing from Firebase config!"); return; }
+            if (document.querySelector(`script[data-zone='${zoneId}']`)) return;
+            const script = document.createElement('script');
+            script.src = `//libtl.com/sdk.js`;
+            script.setAttribute('data-zone', zoneId);
+            script.setAttribute('data-sdk', `show_${zoneId}`);
+            script.async = true;
+            document.body.appendChild(script);
+        };
+
+        const initApp = async () => {
+            tg.ready(); tg.expand();
+            tgUser = tg.initDataUnsafe.user;
+            if (!tgUser || !tgUser.id) { tg.showAlert("User data not found.", () => tg.close()); return; }
+
+            try {
+                updateProgress(10); firebase.initializeApp(firebaseConfig); const db = firebase.database();
+                updateProgress(20);
+                
+                const configSnapshot = await db.ref('config').once('value');
+                appConfig = configSnapshot.val() || {};
+                updateProgress(40);
+
+                await loadUserData(db);
+                updateProgress(60);
+
+                const historyPromise = loadTransactionHistory(db);
+                const superTaskHistoryPromise = loadSuperTaskHistory(db);
+
+                await Promise.all([historyPromise, superTaskHistoryPromise]);
+                updateProgress(80);
+
+                loadAdSdk(appConfig.adZoneId);
+                earningWalletBalance = parseFloat(localStorage.getItem(`earningWallet_${tgUser.id}`) || '0');
+                
+                renderUI(); setupNavigation(); setupEventListeners();
+                updateProgress(100);
+
+                setTimeout(() => {
+                    document.getElementById('app-loader').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    if (appConfig.welcomeMessage && !userState.welcomed) {
+                        const continueButtonHtml = appConfig.welcomeMessageUrl 
+                            ? `<button class="popup-close-btn" onclick="window.Telegram.WebApp.openLink('${appConfig.welcomeMessageUrl}'); document.getElementById('popup').style.display='none';">Continue</button>`
+                            : `<button class="popup-close-btn">Continue</button>`;
+                        
+                        showPopup(`<h2>Welcome!</h2><p>${appConfig.welcomeMessage}</p>${continueButtonHtml}`);
+                        db.ref(`users/${tgUser.id}/welcomed`).set(true);
+                    }
+                }, 300);
+            } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
+        };
+        
+        // --- Existing loadUserData, handleWatchAd, handleMoveToBalance etc. ---
+        // (No changes to these core functions, only UI rendering functions will be modified/added)
+        
+        const loadUserData = async (db) => {
+            const userRef = db.ref(`users/${tgUser.id}`);
+            const snapshot = await userRef.once('value');
+            let userData = snapshot.val();
+            
+            if (!userData) {
+                const startParam = tg.initDataUnsafe.start_param;
+                const referralId = (startParam && !isNaN(startParam)) ? startParam : null;
+                
+                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false };
+                await userRef.set(userData);
+                
+                if (referralId && referralId != tgUser.id) {
+                    const referrerRef = db.ref(`users/${referralId}`);
+                    const bonusAmount = parseFloat(appConfig.referralBonus || 0);
+                    
+                    if (bonusAmount > 0) {
+                        await referrerRef.transaction(currentData => {
+                            if (currentData) {
+                                currentData.balance = (currentData.balance || 0) + bonusAmount;
+                                currentData.referrals = (currentData.referrals || 0) + 1;
+                            }
+                            return currentData;
+                        });
+                    } else {
+                        await referrerRef.child('referrals').set(firebase.database.ServerValue.increment(1));
+                    }
+                }
+            }
+            
+            const today = new Date().toISOString().slice(0, 10);
+            if (userData.lastAdWatchDate !== today) {
+                userData.dailyAdCount = 0; userData.lastAdWatchDate = today;
+                await userRef.update({ dailyAdCount: 0, lastAdWatchDate: today });
+            }
+            userState = userData;
+        };
+        
+        const loadTransactionHistory = async (db) => {
+            userTransactions = [];
+            const statuses = ['pending', 'completed', 'rejected'];
+            const historyPromises = statuses.map(status => db.ref(`withdrawals/${status}`).orderByChild('userId').equalTo(tgUser.id).once('value'));
+            const snapshots = await Promise.all(historyPromises);
+            snapshots.forEach(snap => { snap.forEach(childSnap => { userTransactions.push(childSnap.val()); }); });
+            userTransactions.sort((a, b) => b.timestamp - a.timestamp);
+        };
+
+        const loadSuperTaskHistory = async (db) => {
+            userSuperTaskSubmissions = [];
+            const statuses = ['pending', 'completed', 'rejected'];
+            const historyPromises = statuses.map(status => db.ref(`superTaskSubmissions/${status}`).orderByChild('userId').equalTo(tgUser.id).once('value'));
+            const snapshots = await Promise.all(historyPromises);
+            snapshots.forEach(snap => {
+                snap.forEach(childSnap => {
+                    userSuperTaskSubmissions.push({ ...childSnap.val(), key: childSnap.key });
+                });
+            });
+            userSuperTaskSubmissions.sort((a, b) => b.timestamp - a.timestamp);
+        };
+        
+        const renderUI = () => {
+            document.getElementById('user-photo').src = userState.photoUrl || 'https://via.placeholder.com/80';
+            document.getElementById('user-name').textContent = `${userState.firstName} ${userState.lastName}`;
+            document.getElementById('user-balance').textContent = (userState.balance || 0).toFixed(2);
+            document.getElementById('daily-ads-watched').textContent = `${userState.dailyAdCount || 0} / ${appConfig.dailyAdLimit || 0}`;
+            document.getElementById('referral-count').textContent = userState.referrals || 0;
+            document.getElementById('total-ads-watched').textContent = userState.lifetimeAdCount || 0;
+            document.getElementById('total-earned').textContent = (userState.totalEarned || 0).toFixed(2);
+            document.getElementById('earning-wallet-balance').textContent = earningWalletBalance.toFixed(2);
+            const earningWalletDisplay = document.getElementById('earning-wallet-balance-display');
+            if(earningWalletDisplay) earningWalletDisplay.textContent = earningWalletBalance.toFixed(2);
+
+            document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
+            renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
+            renderHomeReferralSection(); renderHomePremiumAd();
+        };
+
+        // NEW: Render Referral Section on Home Page
+        const renderHomeReferralSection = () => {
+            const container = document.getElementById('home-referral-section');
+            if(!container) return;
+            const refLink = `https://t.me/${appConfig.botUsername || 'your_bot'}/app?startapp=${tgUser.id}`;
+            container.innerHTML = `<div class="referral-section" style="margin-top:0;">
+                <h3>Refer & Earn More!</h3>
+                <div class="referral-input">
+                    <input type="text" id="home-referral-link" value="${refLink}" readonly>
+                    <button class="copy-btn" id="home-copy-ref-btn"><i class="fas fa-copy"></i></button>
+                    <button class="share-btn" id="home-share-ref-btn"><i class="fas fa-share-alt"></i></button>
+                </div>
+            </div>`;
+        };
+
+        // NEW: Render Premium Ad Box on Home Page
+        const renderHomePremiumAd = () => {
+            const container = document.getElementById('home-premium-ad-section');
+            if(!container || !appConfig.premiumAccountUrl) return;
+            container.innerHTML = `
+                <a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl}'); return false;" class="premium-ad-box">
+                    <div class="icon"><i class="fas fa-crown"></i></div>
+                    <div class="text">
+                        <h4>প্রিমিয়াম অ্যাকাউন্ট নিন</h4>
+                        <p>আনলিমিটেড ইনকাম শুরু করুন</p>
+                    </div>
+                </a>`;
+        };
+        
+        const renderAdProgress = () => {
+            const container = document.getElementById('ad-progress-container');
+            if (!container) return;
+            const dailyLimit = appConfig.dailyAdLimit || 1;
+            const watchedCount = userState.dailyAdCount || 0;
+            const percentage = (watchedCount / dailyLimit) * 100;
+            container.innerHTML = `<div class="progress-info"><span>Daily Ad Progress</span><span>${watchedCount} / ${dailyLimit}</span></div><div class="progress-bar-bg"><div class="progress-bar-fg" style="width: ${percentage}%;"></div></div>`;
+        };
+        
+        const handleWatchAd = async () => {
+            if (userState.dailyAdCount >= appConfig.dailyAdLimit) { tg.showAlert("You have reached your daily ad watch limit."); return; }
+            const now = Date.now();
+            if (userState.breakUntil && now < userState.breakUntil) {
+                const remaining = Math.ceil((userState.breakUntil - now) / 60000);
+                tg.showAlert(`Please wait for ${remaining} more minutes.`); return;
+            }
+            
+            const adFunction = window['show_' + appConfig.adZoneId];
+            if (typeof adFunction !== 'function') {
+                tg.showAlert("Ad network is not ready yet. Please wait a few seconds and try again."); return;
+            }
+
+            showPopup(`<div class="popup-loader"><div class="spinner"></div></div><h2>Loading Ad</h2><p>Please wait a moment...</p>`);
+            
+            try {
+                await adFunction();
+                closePopup();
+                const adValue = appConfig.adValue || 0;
+                
+                earningWalletBalance += adValue;
+                localStorage.setItem(`earningWallet_${tgUser.id}`, earningWalletBalance.toString());
+
+                userState.dailyAdCount++;
+                userState.lifetimeAdCount++;
+                userState.totalEarned = (userState.totalEarned || 0) + adValue;
+
+                const db = firebase.database(); const userRef = db.ref(`users/${tgUser.id}`);
+                const updates = {};
+                updates.dailyAdCount = userState.dailyAdCount;
+                updates.lifetimeAdCount = userState.lifetimeAdCount;
+                updates.totalEarned = userState.totalEarned;
+                if ((userState.dailyAdCount) % appConfig.adsPerBreak === 0 && appConfig.adsPerBreak > 0) {
+                    updates.breakUntil = Date.now() + (appConfig.breakDuration * 60000);
+                    userState.breakUntil = updates.breakUntil;
+                }
+                await userRef.update(updates);
+                
+                const today = new Date().toISOString().slice(0, 10);
+                await db.ref(`userEarnings/${tgUser.id}/${today}`).set(firebase.database.ServerValue.increment(adValue));
+
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert(`+${adValue.toFixed(2)} TK added to your Earning Wallet.`);
+                
+                renderUI();
+
+            } catch (error) {
+                console.error("Ad failed to load:", error);
+                closePopup();
+                tg.showAlert("Ad could not be loaded. Please try again.");
+            }
+        };
+
+        const handleMoveToBalance = async () => {
+            if(earningWalletBalance < 100) { tg.showAlert("You need at least 100 TK to move."); return; }
+            const btn = document.getElementById('move-to-balance-btn'); btn.disabled = true; btn.textContent = 'Moving...';
+            try {
+                const db = firebase.database();
+                await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(earningWalletBalance));
+                userState.balance += earningWalletBalance;
+                earningWalletBalance = 0;
+                localStorage.setItem(`earningWallet_${tgUser.id}`, '0');
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("Successfully moved to main balance!");
+            } catch(error) { console.error("Failed to move balance:", error); tg.showAlert("Failed to move balance. Please try again.");
+            } finally { btn.textContent = 'Move'; renderUI(); }
+        };
+
+        // UPDATED: Withdrawal History with new design
+        const renderWithdrawalHistory = () => {
+            const listEl = document.getElementById('withdrawal-history-list');
+            if(!listEl) return;
+            if (userTransactions.length === 0) { listEl.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No withdrawal history found.</p>'; return; }
+            listEl.innerHTML = userTransactions.map(item => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span class="transaction-id">ID: #${item.id.slice(-6)}</span>
+                        <span class="history-status status-${item.status}">${item.status}</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="details">
+                            <p>${item.method}</p>
+                            <small>${item.account} &bull; ${new Date(item.timestamp).toLocaleString()}</small>
+                        </div>
+                        <span class="amount">${item.amount.toFixed(2)} TK</span>
+                    </div>
+                </div>`).join('');
+        };
+        
+        // NEW: Super Task History
+        const renderSuperTaskHistory = () => {
+            const listEl = document.getElementById('super-task-history-list');
+            if(!listEl) return;
+            if (userSuperTaskSubmissions.length === 0) { listEl.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No task history found.</p>'; return; }
+            
+            listEl.innerHTML = userSuperTaskSubmissions.map(item => {
+                const taskDetails = appConfig.superTasks && appConfig.superTasks[item.taskId] ? appConfig.superTasks[item.taskId] : { title: 'Unknown Task', reward: 0 };
+                return `
+                <div class="history-item task-history-item">
+                    <div class="history-header">
+                        <span class="transaction-id">Task: ${taskDetails.title}</span>
+                        <span class="history-status status-${item.status}">${item.status}</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="details">
+                            <p>Submitted on:</p>
+                            <small>${new Date(item.timestamp).toLocaleString()}</small>
+                        </div>
+                        <span class="amount">+${taskDetails.reward.toFixed(2)} TK</span>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        const setupNavigation = () => {
+            const navButtons = document.querySelectorAll('.nav-btn'); const pages = document.querySelectorAll('.page');
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const pageId = button.dataset.page;
+                    pages.forEach(page => page.classList.remove('active'));
+                    document.getElementById(pageId).classList.add('active');
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Reset super task page view
+                    document.getElementById('super-task-list-view').style.display = 'block';
+                    document.getElementById('super-task-detail-view').style.display = 'none';
+                    
+                    if (pageId === 'profile-page') { renderWithdrawalHistory(); renderSuperTaskHistory(); }
+                    if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
+                });
+            });
+        };
+        
+        const setupEventListeners = () => {
+            popup.addEventListener('click', (e) => { 
+                if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
+            });
+            document.getElementById('dynamic-tasks-container').addEventListener('click', (e) => handleClaimTask(e));
+            document.getElementById('profile-page').addEventListener('submit', (e) => handleWithdraw(e));
+            document.getElementById('home-referral-section').addEventListener('click', (e) => {
+                if (e.target.closest('#home-copy-ref-btn')) copyReferralLink('home-referral-link');
+                if (e.target.closest('#home-share-ref-btn')) shareReferralLink('home-referral-link');
+            });
+            document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
+        };
+        
+        // --- Existing renderAdTask, handleClaimTask etc. are fine ---
+        // New functions for Super Tasks will be added below
+        const renderAdTask = () => {
+            const container = document.getElementById('ad-task-container');
+            if (!container) return;
+            const now = Date.now();
+            const onBreak = userState.breakUntil && now < userState.breakUntil;
+            const limitReached = userState.dailyAdCount >= appConfig.dailyAdLimit;
+            let html = '';
+            if (onBreak) {
+                const remaining = Math.ceil((userState.breakUntil - now) / 60000);
+                html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/hourglass.png" alt="icon"><div class="task-info"><h3>Break Time!</h3><p>Please wait for ${remaining} more minutes.</p></div><button class="action-btn" disabled>Waiting</button></div>`;
+            } else if (limitReached) {
+                html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/stop-circled.png" alt="icon"><div class="task-info"><h3>Daily Limit Reached</h3><p>Come back tomorrow for more ads.</p></div><button class="action-btn" disabled>Limit</button></div>`;
+            } else {
+                html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/play-button-circled.png" alt="icon"><div class="task-info"><h3>Watch a Rewarded Ad</h3><p>Earn ${appConfig.adValue || 0} TK for every ad.</p></div><button id="watch-ad-btn" class="action-btn">Watch Ad</button></div>`;
+            }
+            container.innerHTML = html;
+            if (!onBreak && !limitReached) { document.getElementById('watch-ad-btn').addEventListener('click', handleWatchAd); }
+        };
+
+        const handleClaimTask = async (e) => {
+            if (e.target.classList.contains('action-btn') && e.target.dataset.taskId) {
+                const taskId = e.target.dataset.taskId;
+                const task = appConfig.tasks[taskId];
+                if (!task || (userState.completedTasks && userState.completedTasks[taskId])) { tg.showAlert('You have already claimed this bonus.'); return; }
+                tg.openLink(e.target.dataset.taskUrl);
+                e.target.disabled = true; e.target.textContent = 'Claiming...';
+                setTimeout(async () => {
+                    try {
+                        const db = firebase.database(); const userRef = db.ref(`users/${tgUser.id}`);
+                        await userRef.child(`completedTasks/${taskId}`).set(true);
+                        await userRef.child('balance').set(firebase.database.ServerValue.increment(task.reward));
+                        userState.balance += task.reward;
+                        if (!userState.completedTasks) userState.completedTasks = {};
+                        userState.completedTasks[taskId] = true;
+                        tg.HapticFeedback.notificationOccurred('success');
+                        tg.showAlert(`Thank you! You received ${task.reward} bonus TK.`);
+                        renderUI();
+                    } catch (error) { tg.showAlert('Failed to claim bonus.'); e.target.disabled = false; e.target.textContent = 'Claim Bonus'; }
+                }, 5000);
+            }
+        };
+
+        // UPDATED: handleWithdraw with new success popup
+        const handleWithdraw = async (e) => {
+            if(e.target.id !== 'withdraw-form') return;
+            e.preventDefault();
+
+            const minRefsRequired = appConfig.minimumWithdrawReferrals || 0;
+            const userReferrals = userState.referrals || 0;
+            
+            if (minRefsRequired > 0 && userReferrals < minRefsRequired) {
+                tg.showAlert(`Withdrawal failed. You need at least ${minRefsRequired} referrals. You currently have ${userReferrals}.`);
+                return;
+            }
+
+            const methodEl = document.getElementById('withdraw-method');
+            const accountNumber = document.getElementById('account-number').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const selectedMethod = appConfig.withdrawMethods.find(m => m.name === methodEl.value);
+            
+            if (isNaN(amount) || amount <= 0) { tg.showAlert("Please enter a valid amount."); return; }
+            if (!selectedMethod) { tg.showAlert("Invalid withdrawal method."); return; }
+            if (amount < selectedMethod.min) { tg.showAlert(`Minimum withdrawal for ${selectedMethod.name} is ${selectedMethod.min} TK.`); return; }
+            if (amount > userState.balance) { tg.showAlert("You don't have enough balance."); return; }
+            
+            const btn = document.getElementById('withdraw-submit-btn'); btn.disabled = true; btn.textContent = 'Submitting...';
+            const db = firebase.database();
+            try {
+                const userRef = db.ref(`users/${tgUser.id}`);
+                userState.balance -= amount;
+                renderUI(); 
+                
+                await userRef.child('balance').set(firebase.database.ServerValue.increment(-amount));
+                const reqId = db.ref('withdrawals/pending').push().key;
+                const newRequest = { id: reqId, userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, method: selectedMethod.name, account: accountNumber, amount: amount, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
+                await db.ref(`withdrawals/pending/${reqId}`).set(newRequest);
+                
+                userTransactions.unshift({ ...newRequest, timestamp: Date.now() });
+                renderWithdrawalHistory(); 
+                
+                tg.HapticFeedback.notificationOccurred('success');
+                showPopup(`<h2>Request Submitted!</h2><p>আপনি ${amount.toFixed(2)} টাকা উত্তোলন করেছেন। এডমিন রিভিউ করে আপনার পেমেন্টটি কিছুক্ষণের মধ্যে করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
+                document.getElementById('withdraw-form').reset();
+            } catch (error) {
+                userState.balance += amount;
+                tg.HapticFeedback.notificationOccurred('error'); 
+                tg.showAlert("Failed to submit request. Your balance has been restored.");
+            } finally {
+                renderUI();
+                btn.disabled = false;
+                btn.textContent = 'Submit Request';
+            }
+        };
+
+        const copyReferralLink = (inputId) => {
+            const refLinkInput = document.getElementById(inputId);
+            refLinkInput.select();
+            refLinkInput.setSelectionRange(0, 99999);
+            try {
+                navigator.clipboard.writeText(refLinkInput.value).then(() => {
+                    tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert("Referral link copied!");
+                });
+            } catch (err) {
+                document.execCommand('copy');
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert("Referral link copied!");
+            }
+        };
+
+        const shareReferralLink = (inputId) => {
+            const refLinkInput = document.getElementById(inputId);
+            const link = refLinkInput.value;
+            tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join and earn with me!')}`);
+        };
+
+        // --- NEW SUPER TASK FUNCTIONS ---
+
+        const renderSuperTasksPage = () => {
+            const container = document.getElementById('super-tasks-container');
+            container.innerHTML = '';
+            if (appConfig.superTasks) {
+                const tasks = [];
+                for(const key in appConfig.superTasks) { tasks.push({key, ...appConfig.superTasks[key]}); }
+                tasks.reverse();
+
+                tasks.forEach(task => {
+                    const userSubmission = userSuperTaskSubmissions.find(sub => sub.taskId === task.key);
+                    let buttonHtml;
+                    if (userSubmission) {
+                        buttonHtml = `<button class="action-btn task-view-btn" disabled>${userSubmission.status.charAt(0).toUpperCase() + userSubmission.status.slice(1)}</button>`;
+                    } else {
+                        buttonHtml = `<button class="action-btn task-view-btn" onclick="window.globalFuncs.showTaskDetail('${task.key}')">View Task</button>`;
+                    }
+
+                    const el = document.createElement('div');
+                    el.className = 'super-task-card';
+                    el.innerHTML = `
+                        <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
+                        <div class="task-content">
+                            <h3>${task.title}</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p>
+                            <div class="task-meta">
+                                <span class="reward">Reward: ${task.reward} TK</span>
+                                <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
+                            </div>
+                            ${buttonHtml}
+                        </div>`;
+                    container.appendChild(el);
+                });
+            } else {
+                container.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No super tasks available right now.</p>';
+            }
+        };
+        
+        const showTaskDetail = (taskId) => {
+            const task = appConfig.superTasks[taskId];
+            const detailContainer = document.getElementById('super-task-detail-view');
+            
+            detailContainer.innerHTML = `
+                <button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
+                <div class="super-task-card" style="margin-bottom:0;">
+                     <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
+                     <div class="task-content">
+                        <h3>${task.title}</h3>
+                        <p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
+                        <div class="task-meta">
+                            <span class="reward">Reward: ${task.reward} TK</span>
+                            <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
+                        </div>
+                        <a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a>
+                        
+                        <form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')">
+                            <h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4>
+                            <div class="form-group">
+                                <label for="proof-text">Work Proof (optional):</label>
+                                <textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="screenshot-link">Screenshot Link:</label>
+                                <input type="url" id="screenshot-link" class="form-control" placeholder="https://example.com/image.png" required>
+                                <a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.screenshotUploadUrl || 'https://imgbb.com'}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-top: 5px; display:inline-block;">Create screenshot link here</a>
+                            </div>
+                            <button type="submit" class="action-btn" style="width:100%;">Submit Task</button>
+                        </form>
+                     </div>
+                </div>
+            `;
+            
+            document.getElementById('super-task-list-view').style.display = 'none';
+            detailContainer.style.display = 'block';
+        };
+
+        const showTaskList = () => {
+            document.getElementById('super-task-list-view').style.display = 'block';
+            document.getElementById('super-task-detail-view').style.display = 'none';
+        };
+
+        const handleSuperTaskSubmit = async (event, taskId) => {
+            event.preventDefault();
+            const btn = event.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.textContent = 'Submitting...';
+
+            const proofText = document.getElementById('proof-text').value;
+            const screenshotLink = document.getElementById('screenshot-link').value;
+
+            const db = firebase.database();
+            const submissionData = {
+                userId: tgUser.id,
+                userName: `${userState.firstName} ${userState.lastName}`,
+                taskId: taskId,
+                proofText: proofText,
+                screenshotLink: screenshotLink,
+                status: 'pending',
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            try {
+                await db.ref(`superTaskSubmissions/pending`).push(submissionData);
+                await loadSuperTaskHistory(db); // Reload history
+                tg.HapticFeedback.notificationOccurred('success');
+                showPopup(`<h2>Task Submitted!</h2><p>আপনার টাস্ক জমা দেওয়া হয়েছে। এডমিন রিভিউ করে আপনার রিওয়ার্ড যোগ করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
+                showTaskList();
+                renderSuperTasksPage(); // Re-render the list to show pending status
+            } catch (error) {
+                console.error("Task submission failed: ", error);
+                tg.showAlert('Failed to submit task. Please try again.');
+                btn.disabled = false; btn.textContent = 'Submit Task';
+            }
+        };
+
+        // Make functions globally accessible for inline onclicks
+        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit };
+        
+        // --- END OF NEW FUNCTIONS ---
+
+        const renderDynamicTasks = () => {
+            const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';
+            if (appConfig.tasks) {
+                const tasks = [];
+                for(const key in appConfig.tasks) { tasks.push({key, ...appConfig.tasks[key]}); }
+                tasks.reverse();
+                tasks.forEach(task => {
+                    const isCompleted = userState.completedTasks && userState.completedTasks[task.key];
+                    const el = document.createElement('div'); el.className = 'task-container';
+                    el.innerHTML = `<img class="task-icon-img" src="${task.icon}" alt="icon"><div class="task-info"><h3>${task.name}</h3><p>Get ${task.reward} bonus TK.</p></div><button class="action-btn" data-task-id="${task.key}" data-task-url="${task.url}" ${isCompleted ? 'disabled' : ''}>${isCompleted ? 'Claimed' : 'Claim Bonus'}</button>`;
+                    container.appendChild(el);
+                });
+            }
+        };
+
+        const renderWithdrawSection = () => {
+            const container = document.getElementById('withdraw-section'); let optionsHtml = '';
+            if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} TK)</option>`; }); }
+            
+            const minRefs = appConfig.minimumWithdrawReferrals || 0;
+            let referralNotice = '';
+            if (minRefs > 0) {
+                referralNotice = `<p style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8;"><b>Note:</b> You need at least <b>${minRefs} referrals</b> to be eligible for withdrawal.</p>`;
+            }
+
+            container.innerHTML = `<form id="withdraw-form" class="withdraw-form"><h3>Request Withdraw</h3>${referralNotice}<div class="form-group"><label for="withdraw-method">Method:</label><select id="withdraw-method" required>${optionsHtml}</select></div><div class="form-group"><label for="account-number">Account Number/ID:</label><input type="text" id="account-number" required></div><div class="form-group"><label for="amount">Amount:</label><input type="number" step="any" id="amount" required></div><button type="submit" id="withdraw-submit-btn" class="action-btn" style="width:100%;">Submit Request</button></form>`;
+        };
+
+        const renderDynamicLinks = () => {
+            const container = document.getElementById('dynamic-links-container'); container.innerHTML = '';
+            if (appConfig.links) {
+                const links = [];
+                for (const key in appConfig.links) { links.push({key, ...appConfig.links[key]}); }
+                links.reverse();
+                links.forEach(link => {
+                    const el = document.createElement('div'); el.className = 'task-container';
+                    el.innerHTML = `<img class="task-icon-img" src="${link.icon}" alt="icon"><div class="task-info"><h3>${link.name}</h3></div><button class="action-btn" onclick="window.Telegram.WebApp.openLink('${link.url}')">Visit</button>`;
+                    container.appendChild(el);
+                });
+            }
+        };
+
+        initApp();
+    });
+    </script>
+</body>
+</html>

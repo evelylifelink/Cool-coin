@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>orange 🍊</title>
+    <title>Gold Coin Earn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -162,8 +162,8 @@
                 <div class="task-container">
                     <div class="task-info">
                         <h3>Earning Wallet</h3>
-                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin: 10px 0;"><span id="earning-wallet-balance-display">0.00</span> TK</p>
-                        <small>Minimum 100 TK to move to main balance.</small>
+                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin: 10px 0;"><span id="earning-wallet-balance-display">0.00</span> Coin</p>
+                        <small>Minimum 100 Coin to move to main balance.</small>
                     </div>
                     <button id="move-to-balance-btn" class="action-btn" style="margin-left: auto;" disabled>Move</button>
                 </div>
@@ -460,7 +460,7 @@
                 await db.ref(`userEarnings/${tgUser.id}/${today}`).set(firebase.database.ServerValue.increment(adValue));
 
                 tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert(`+${adValue.toFixed(2)} TK added to your Earning Wallet.`);
+                tg.showAlert(`+${adValue.toFixed(2)} Coin added to your Earning Wallet.`);
                 
                 renderUI();
 
@@ -472,7 +472,7 @@
         };
 
         const handleMoveToBalance = async () => {
-            if(earningWalletBalance < 100) { tg.showAlert("You need at least 100 TK to move."); return; }
+            if(earningWalletBalance < 100) { tg.showAlert("You need at least 100 Coin to move."); return; }
             const btn = document.getElementById('move-to-balance-btn'); btn.disabled = true; btn.textContent = 'Moving...';
             try {
                 const db = firebase.database();
@@ -502,7 +502,7 @@
                             <p>${item.method}</p>
                             <small>${item.account} &bull; ${new Date(item.timestamp).toLocaleString()}</small>
                         </div>
-                        <span class="amount">${item.amount.toFixed(2)} TK</span>
+                        <span class="amount">${item.amount.toFixed(2)} Coin</span>
                     </div>
                 </div>`).join('');
         };
@@ -526,7 +526,7 @@
                             <p>Submitted on:</p>
                             <small>${new Date(item.timestamp).toLocaleString()}</small>
                         </div>
-                        <span class="amount">+${taskDetails.reward.toFixed(2)} TK</span>
+                        <span class="amount">+${taskDetails.reward.toFixed(2)} Coin</span>
                     </div>
                 </div>`;
             }).join('');
@@ -580,7 +580,7 @@
             } else if (limitReached) {
                 html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/stop-circled.png" alt="icon"><div class="task-info"><h3>Daily Limit Reached</h3><p>Come back tomorrow for more ads.</p></div><button class="action-btn" disabled>Limit</button></div>`;
             } else {
-                html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/play-button-circled.png" alt="icon"><div class="task-info"><h3>Watch a Rewarded Ad</h3><p>Earn ${appConfig.adValue || 0} TK for every ad.</p></div><button id="watch-ad-btn" class="action-btn">Watch Ad</button></div>`;
+                html = `<div class="task-container"><img class="task-icon-img" src="https://img.icons8.com/ios-filled/100/play-button-circled.png" alt="icon"><div class="task-info"><h3>Watch a Rewarded Ad</h3><p>Earn ${appConfig.adValue || 0} Coin for every ad.</p></div><button id="watch-ad-btn" class="action-btn">Watch Ad</button></div>`;
             }
             container.innerHTML = html;
             if (!onBreak && !limitReached) { document.getElementById('watch-ad-btn').addEventListener('click', handleWatchAd); }
@@ -602,7 +602,7 @@
                         if (!userState.completedTasks) userState.completedTasks = {};
                         userState.completedTasks[taskId] = true;
                         tg.HapticFeedback.notificationOccurred('success');
-                        tg.showAlert(`Thank you! You received ${task.reward} bonus TK.`);
+                        tg.showAlert(`Thank you! You received ${task.reward} bonus Coin.`);
                         renderUI();
                     } catch (error) { tg.showAlert('Failed to claim bonus.'); e.target.disabled = false; e.target.textContent = 'Claim Bonus'; }
                 }, 5000);
@@ -629,7 +629,7 @@
             
             if (isNaN(amount) || amount <= 0) { tg.showAlert("Please enter a valid amount."); return; }
             if (!selectedMethod) { tg.showAlert("Invalid withdrawal method."); return; }
-            if (amount < selectedMethod.min) { tg.showAlert(`Minimum withdrawal for ${selectedMethod.name} is ${selectedMethod.min} TK.`); return; }
+            if (amount < selectedMethod.min) { tg.showAlert(`Minimum withdrawal for ${selectedMethod.name} is ${selectedMethod.min} Coin.`); return; }
             if (amount > userState.balance) { tg.showAlert("You don't have enough balance."); return; }
             
             const btn = document.getElementById('withdraw-submit-btn'); btn.disabled = true; btn.textContent = 'Submitting...';
@@ -710,7 +710,7 @@
                             <h3>${task.title}</h3>
                             <p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p>
                             <div class="task-meta">
-                                <span class="reward">Reward: ${task.reward} TK</span>
+                                <span class="reward">Reward: ${task.reward} Coin</span>
                                 <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
                             </div>
                             ${buttonHtml}
@@ -734,7 +734,7 @@
                         <h3>${task.title}</h3>
                         <p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
                         <div class="task-meta">
-                            <span class="reward">Reward: ${task.reward} TK</span>
+                            <span class="reward">Reward: ${task.reward} Coin</span>
                             <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
                         </div>
                         <a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a>
@@ -812,7 +812,7 @@
                 tasks.forEach(task => {
                     const isCompleted = userState.completedTasks && userState.completedTasks[task.key];
                     const el = document.createElement('div'); el.className = 'task-container';
-                    el.innerHTML = `<img class="task-icon-img" src="${task.icon}" alt="icon"><div class="task-info"><h3>${task.name}</h3><p>Get ${task.reward} bonus TK.</p></div><button class="action-btn" data-task-id="${task.key}" data-task-url="${task.url}" ${isCompleted ? 'disabled' : ''}>${isCompleted ? 'Claimed' : 'Claim Bonus'}</button>`;
+                    el.innerHTML = `<img class="task-icon-img" src="${task.icon}" alt="icon"><div class="task-info"><h3>${task.name}</h3><p>Get ${task.reward} bonus Coin.</p></div><button class="action-btn" data-task-id="${task.key}" data-task-url="${task.url}" ${isCompleted ? 'disabled' : ''}>${isCompleted ? 'Claimed' : 'Claim Bonus'}</button>`;
                     container.appendChild(el);
                 });
             }
@@ -820,7 +820,7 @@
 
         const renderWithdrawSection = () => {
             const container = document.getElementById('withdraw-section'); let optionsHtml = '';
-            if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} TK)</option>`; }); }
+            if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} Coin)</option>`; }); }
             
             const minRefs = appConfig.minimumWithdrawReferrals || 0;
             let referralNotice = '';

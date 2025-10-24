@@ -45,16 +45,15 @@
         .referral-input .copy-btn { border-radius: 0; }
         .referral-input .share-btn { border-radius: 0 8px 8px 0; }
         
-        /* Updated Premium Ad Box styles */
         .premium-ad-box { 
             display: flex; align-items: center; gap: 15px; padding: 20px; border-radius: 12px; 
             background: linear-gradient(135deg, #3a3200 0%, #2b2300 100%); 
             border: 1px solid var(--primary-color); text-decoration: none; color: white;
-            margin-bottom: 20px; /* Added margin */
+            margin-bottom: 20px;
         }
-        .premium-ad-box .icon { font-size: 2.2rem; color: var(--primary-color); } /* Increased size */
-        .premium-ad-box .text h4 { margin: 0; font-size: 1.2rem; font-weight: 700; } /* Increased size */
-        .premium-ad-box .text p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8; } /* Increased size */
+        .premium-ad-box .icon { font-size: 2.2rem; color: var(--primary-color); }
+        .premium-ad-box .text h4 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+        .premium-ad-box .text p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-card { padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
@@ -75,7 +74,6 @@
         .progress-bar-bg { width: 100%; height: 10px; border-radius: 5px; background-color: #333; }
         .progress-bar-fg { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)); transition: width 0.3s ease; }
         
-        /* History Item Design */
         .history-list .history-item {
             background: var(--surface-dark); border: 1px solid var(--border-dark);
             border-radius: 12px; padding: 15px; margin-bottom: 12px;
@@ -91,7 +89,7 @@
         .history-body .details p { margin: 0; font-size: 1rem; font-weight: 500; }
         .history-body .details small { color: var(--text-secondary-dark); font-size: 0.8rem; }
         .history-body .amount { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
-        .history-list .task-history-item .details p { font-size: 0.9rem; } /* Specific for tasks */
+        .history-list .task-history-item .details p { font-size: 0.9rem; }
 
         .withdraw-form { padding: 20px; border-radius: 12px; margin: 20px 0; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .withdraw-form h3 { color: var(--primary-color); margin-bottom: 15px; }
@@ -116,22 +114,27 @@
         .nav-btn i { font-size: 1.5rem; margin-bottom: 4px; } 
         .nav-btn.active { color: var(--primary-color); }
 
-        /* Super Task Styles */
-        .super-task-card {
-            background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px;
-            overflow: hidden; border: 1px solid var(--border-dark);
-        }
-        .super-task-card img.task-banner {
-            width: 100%; height: 120px; object-fit: cover;
-        }
+        .super-task-card { background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid var(--border-dark); }
+        .super-task-card img.task-banner { width: 100%; height: 120px; object-fit: cover; }
         .super-task-card .task-content { padding: 15px; }
         .super-task-card .task-content h3 { color: var(--primary-color); margin-bottom: 8px; }
         .task-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 0.9rem; }
         .task-meta .reward { font-weight: 700; color: var(--success); }
         .task-meta .limit { font-weight: 500; color: var(--text-secondary-dark); }
         .task-view-btn { width: 100%; margin-top: 15px; }
-
         #super-task-detail-view { display: none; }
+
+        /* Referral Page Styles */
+        .referral-user-card { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; background: var(--surface-dark); border: 1px solid var(--border-dark); margin-bottom: 20px; }
+        .referral-user-card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        .referral-user-card .info h4 { font-size: 1.1rem; margin: 0; font-weight: 600; }
+        .referral-user-card .info p { font-size: 0.85rem; color: var(--text-secondary-dark); margin: 4px 0 0; }
+        .referral-list-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; background: var(--surface-dark); margin-bottom: 10px; }
+        .referral-list-item img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .referral-list-item .info { flex: 1; }
+        .referral-list-item .info p { font-size: 1rem; font-weight: 500; }
+        .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
+        .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
     </style>
 </head>
 <body>
@@ -156,7 +159,6 @@
 
         <main id="main-content">
             <div id="home-page" class="page active">
-                <!-- Swapped order and updated styles via CSS -->
                 <div id="home-premium-ad-section"></div>
                 <div id="home-referral-section"></div>
 
@@ -187,31 +189,42 @@
                 <h2 style="color: var(--primary-color); margin-top: 25px; margin-bottom: 10px;">Bonus Tasks</h2>
                 <div id="dynamic-tasks-container"></div>
             </div>
+            
+            <!-- NEW REFERRAL PAGE -->
+            <div id="referral-page" class="page">
+                <h2 class="page-heading">Referral History</h2>
+                <div id="referred-by-section">
+                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">You Were Invited By</h3>
+                    <div id="referrer-info-container"></div>
+                </div>
+                <hr style="border-color: var(--border-dark); margin: 20px 0;">
+                <div id="my-referrals-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="font-size: 1.1rem; margin: 0;">Users You Invited</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: var(--primary-color);" id="my-referrals-count">Total: 0</p>
+                    </div>
+                    <div id="referral-list-container"></div>
+                </div>
+            </div>
 
             <div id="super-tasks-page" class="page">
                 <div id="super-task-list-view">
-                    <h2 style="color: var(--primary-color); margin-bottom: 15px; text-align: center;">Super Tasks</h2>
+                    <h2 class="page-heading">Super Tasks</h2>
                     <div id="super-tasks-container"></div>
                 </div>
-                <div id="super-task-detail-view">
-                    <!-- Dynamic content here -->
-                </div>
+                <div id="super-task-detail-view"></div>
             </div>
 
             <div id="profile-page" class="page">
                  <div id="withdraw-section"></div>
-
                  <div id="withdrawal-history-section" style="margin-top: 20px;">
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Withdrawal History</h2>
                     <div id="withdrawal-history-list" class="history-list"></div>
                  </div>
-
                  <div id="super-task-history-section" style="margin-top: 20px;">
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Super Task History</h2>
                     <div id="super-task-history-list" class="history-list"></div>
                  </div>
-                 
-                 <!-- New Admin Adjustments History Section -->
                  <div id="admin-transactions-section" style="margin-top: 20px;">
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Admin Adjustments</h2>
                     <div id="admin-transactions-list" class="history-list"></div>
@@ -222,6 +235,7 @@
         <nav class="bottom-nav">
             <button class="nav-btn active" data-page="home-page"><i class="fas fa-home"></i><span>Home</span></button>
             <button class="nav-btn" data-page="tasks-page"><i class="fas fa-tasks"></i><span>Tasks</span></button>
+            <button class="nav-btn" data-page="referral-page"><i class="fas fa-users"></i><span>Referrals</span></button>
             <button class="nav-btn" data-page="super-tasks-page"><i class="fas fa-rocket"></i><span>Super Tasks</span></button>
             <button class="nav-btn" data-page="profile-page"><i class="fas fa-user-alt"></i><span>Profile</span></button>
         </nav>
@@ -248,7 +262,7 @@
         let appConfig = {}; let userState = {}; let tgUser = {}; let earningWalletBalance = 0;
         let userTransactions = [];
         let userSuperTaskSubmissions = [];
-        let adminTransactions = []; // For admin adjustments
+        let adminTransactions = [];
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -258,9 +272,10 @@
             popupBody.innerHTML = content;
             popup.style.display = 'flex';
             if (!closable) {
-                popup.addEventListener('click', (e) => {
+                const existingOverlay = popup.onclick;
+                popup.onclick = (e) => {
                     if (e.target.id === 'popup') e.stopPropagation();
-                });
+                };
             }
         };
         const closePopup = () => { popup.style.display = 'none'; };
@@ -295,7 +310,7 @@
 
                 const historyPromise = loadTransactionHistory(db);
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
-                const adminHistoryPromise = loadAdminTransactionHistory(db); // Load admin adjustments
+                const adminHistoryPromise = loadAdminTransactionHistory(db);
 
                 await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise]);
                 updateProgress(80);
@@ -310,23 +325,26 @@
                     document.getElementById('app-loader').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     
-                    // MODIFIED: Welcome message logic to show every time
                     if (appConfig.welcomeMessage) {
-                        const premiumGuide = `
-                            <div style="text-align: left; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-dark); font-size: 0.9rem;">
-                                <h4 style="color: var(--primary-color); margin-bottom: 8px;">প্রিমিয়াম গাইডলাইন:</h4>
-                                <p style="margin-bottom: 5px;">১. প্রিমিয়াম নিতে 'Join Now' বাটনে ক্লিক করে যোগাযোগ করুন।</p>
-                                <p style="margin-bottom: 5px;">২. আনলিমিটেড ইনকামের সুবিধা উপভোগ করুন।</p>
-                            </div>
-                        `;
-                        const buttonsHtml = `
-                            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                                <button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl || ''}'); document.getElementById('popup').style.display='none';">Join Now</button>
-                                <button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">বুঝেছি</button>
-                            </div>
-                        `;
+                        const premiumGuide = `<div style="text-align: left; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-dark); font-size: 0.9rem;"><h4 style="color: var(--primary-color); margin-bottom: 8px;">প্রিমিয়াম গাইডলাইন:</h4><p style="margin-bottom: 5px;">১. প্রিমিয়াম নিতে 'Join Now' বাটনে ক্লিক করে যোগাযোগ করুন।</p><p style="margin-bottom: 5px;">২. আনলিমিটেড ইনকামের সুবিধা উপভোগ করুন।</p></div>`;
+                        const buttonsHtml = `<div style="display: flex; gap: 10px; margin-top: 25px;"><button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl || ''}'); document.getElementById('popup').style.display='none';">Join Now</button><button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">বুঝেছি</button></div>`;
                         showPopup(`<h2>Welcome!</h2><p>${appConfig.welcomeMessage}</p>${premiumGuide}${buttonsHtml}`, false);
                     }
+                    
+                    // Premium popup logic
+                    if (appConfig.premiumPopup && appConfig.premiumPopup.message && appConfig.premiumPopup.url) {
+                        setTimeout(() => {
+                            const premiumPopupContent = `
+                                <h2>${appConfig.premiumPopup.title || 'Go Premium!'}</h2>
+                                <p>${appConfig.premiumPopup.message}</p>
+                                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                                    <button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumPopup.url}'); document.getElementById('popup').style.display='none';">প্রিমিয়াম নিন</button>
+                                    <button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">Close</button>
+                                </div>`;
+                            showPopup(premiumPopupContent, false);
+                        }, 15000); // 15 seconds delay
+                    }
+
                 }, 300);
             } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
         };
@@ -347,17 +365,15 @@
                     const referrerRef = db.ref(`users/${referralId}`);
                     const bonusAmount = parseFloat(appConfig.referralBonus || 0);
                     
-                    if (bonusAmount > 0) {
-                        await referrerRef.transaction(currentData => {
-                            if (currentData) {
+                    await referrerRef.transaction(currentData => {
+                        if (currentData) {
+                            if (bonusAmount > 0) {
                                 currentData.balance = (currentData.balance || 0) + bonusAmount;
-                                currentData.referrals = (currentData.referrals || 0) + 1;
                             }
-                            return currentData;
-                        });
-                    } else {
-                        await referrerRef.child('referrals').set(firebase.database.ServerValue.increment(1));
-                    }
+                            currentData.referrals = (currentData.referrals || 0) + 1;
+                        }
+                        return currentData;
+                    });
                 }
             }
             
@@ -391,17 +407,14 @@
             userSuperTaskSubmissions.sort((a, b) => b.timestamp - a.timestamp);
         };
 
-        // NEW: Load Admin Transaction History
         const loadAdminTransactionHistory = async (db) => {
             adminTransactions = [];
             const historyRef = db.ref(`adminTransactions/${tgUser.id}`).orderByChild('timestamp');
             const snapshot = await historyRef.once('value');
             if (snapshot.exists()) {
-                snapshot.forEach(childSnap => {
-                    adminTransactions.push(childSnap.val());
-                });
+                snapshot.forEach(childSnap => { adminTransactions.push(childSnap.val()); });
             }
-            adminTransactions.reverse(); // Show latest first
+            adminTransactions.reverse();
         };
         
         const renderUI = () => {
@@ -420,6 +433,62 @@
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection(); renderHomePremiumAd();
         };
+        
+        const renderReferralPage = async () => {
+            const referrerContainer = document.getElementById('referrer-info-container');
+            const referralListContainer = document.getElementById('referral-list-container');
+            const myReferralsCount = document.getElementById('my-referrals-count');
+            
+            referrerContainer.innerHTML = '<p>Loading...</p>';
+            referralListContainer.innerHTML = '<p>Loading...</p>';
+
+            const db = firebase.database();
+
+            // 1. Show who referred the current user
+            if (userState.referredBy) {
+                const referrerSnap = await db.ref(`users/${userState.referredBy}`).once('value');
+                if (referrerSnap.exists()) {
+                    const referrer = referrerSnap.val();
+                    referrerContainer.innerHTML = `
+                        <div class="referral-user-card">
+                            <img src="${referrer.photoUrl || 'https://via.placeholder.com/80'}" alt="Referrer">
+                            <div class="info">
+                                <h4>${referrer.firstName || ''} ${referrer.lastName || ''}</h4>
+                                <p>Username: @${referrer.username || 'N/A'}<br>Chat ID: ${referrer.id}</p>
+                            </div>
+                        </div>`;
+                } else {
+                    referrerContainer.innerHTML = '<p>Your referrer information could not be found.</p>';
+                }
+            } else {
+                referrerContainer.innerHTML = '<p style="text-align:center; padding: 10px 0;">You joined directly without a referral.</p>';
+            }
+
+            // 2. Show users referred by the current user
+            const referralsSnap = await db.ref('users').orderByChild('referredBy').equalTo(tgUser.id.toString()).once('value');
+            if (referralsSnap.exists()) {
+                let referralHtml = '';
+                let count = 0;
+                referralsSnap.forEach(childSnap => {
+                    const referredUser = childSnap.val();
+                    count++;
+                    referralHtml += `
+                        <div class="referral-list-item">
+                            <img src="${referredUser.photoUrl || 'https://via.placeholder.com/80'}" alt="User">
+                            <div class="info">
+                                <p>${referredUser.firstName || ''} ${referredUser.lastName || ''}</p>
+                            </div>
+                            <span class="bonus">+${(appConfig.referralBonus || 0).toFixed(2)}</span>
+                        </div>`;
+                });
+                referralListContainer.innerHTML = referralHtml;
+                myReferralsCount.textContent = `Total: ${count}`;
+            } else {
+                referralListContainer.innerHTML = '<p style="text-align:center; padding: 20px 0;">You haven\'t referred anyone yet.</p>';
+                myReferralsCount.textContent = 'Total: 0';
+            }
+        };
+
 
         const renderHomeReferralSection = () => {
             const container = document.getElementById('home-referral-section');
@@ -438,14 +507,7 @@
         const renderHomePremiumAd = () => {
             const container = document.getElementById('home-premium-ad-section');
             if(!container || !appConfig.premiumAccountUrl) return;
-            container.innerHTML = `
-                <a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl}'); return false;" class="premium-ad-box">
-                    <div class="icon"><i class="fas fa-crown"></i></div>
-                    <div class="text">
-                        <h4>প্রিমিয়াম অ্যাকাউন্ট নিন</h4>
-                        <p>আনলিমিটেড ইনকাম শুরু করুন</p>
-                    </div>
-                </a>`;
+            container.innerHTML = `<a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl}'); return false;" class="premium-ad-box"><div class="icon"><i class="fas fa-crown"></i></div><div class="text"><h4>প্রিমিয়াম অ্যাকাউন্ট নিন</h4><p>আনলিমিটেড ইনকাম শুরু করুন</p></div></a>`;
         };
         
         const renderAdProgress = () => {
@@ -529,20 +591,7 @@
             const listEl = document.getElementById('withdrawal-history-list');
             if(!listEl) return;
             if (userTransactions.length === 0) { listEl.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No withdrawal history found.</p>'; return; }
-            listEl.innerHTML = userTransactions.map(item => `
-                <div class="history-item">
-                    <div class="history-header">
-                        <span class="transaction-id">ID: #${item.id.slice(-6)}</span>
-                        <span class="history-status status-${item.status}">${item.status}</span>
-                    </div>
-                    <div class="history-body">
-                        <div class="details">
-                            <p>${item.method}</p>
-                            <small>${item.account} &bull; ${new Date(item.timestamp).toLocaleString()}</small>
-                        </div>
-                        <span class="amount">${item.amount.toFixed(2)} Coin</span>
-                    </div>
-                </div>`).join('');
+            listEl.innerHTML = userTransactions.map(item => `<div class="history-item"><div class="history-header"><span class="transaction-id">ID: #${item.id.slice(-6)}</span><span class="history-status status-${item.status}">${item.status}</span></div><div class="history-body"><div class="details"><p>${item.method}</p><small>${item.account} &bull; ${new Date(item.timestamp).toLocaleString()}</small></div><span class="amount">${item.amount.toFixed(2)} Coin</span></div></div>`).join('');
         };
         
         const renderSuperTaskHistory = () => {
@@ -552,24 +601,10 @@
             
             listEl.innerHTML = userSuperTaskSubmissions.map(item => {
                 const taskDetails = appConfig.superTasks && appConfig.superTasks[item.taskId] ? appConfig.superTasks[item.taskId] : { title: 'Unknown Task', reward: 0 };
-                return `
-                <div class="history-item task-history-item">
-                    <div class="history-header">
-                        <span class="transaction-id">Task: ${taskDetails.title}</span>
-                        <span class="history-status status-${item.status}">${item.status}</span>
-                    </div>
-                    <div class="history-body">
-                        <div class="details">
-                            <p>Submitted on:</p>
-                            <small>${new Date(item.timestamp).toLocaleString()}</small>
-                        </div>
-                        <span class="amount">+${taskDetails.reward.toFixed(2)} Coin</span>
-                    </div>
-                </div>`;
+                return `<div class="history-item task-history-item"><div class="history-header"><span class="transaction-id">Task: ${taskDetails.title}</span><span class="history-status status-${item.status}">${item.status}</span></div><div class="history-body"><div class="details"><p>Submitted on:</p><small>${new Date(item.timestamp).toLocaleString()}</small></div><span class="amount">+${taskDetails.reward.toFixed(2)} Coin</span></div></div>`;
             }).join('');
         };
 
-        // NEW: Render Admin Transaction History
         const renderAdminTransactionHistory = () => {
             const listEl = document.getElementById('admin-transactions-list');
             if (!listEl) return;
@@ -580,20 +615,7 @@
             listEl.innerHTML = adminTransactions.map(item => {
                 const isAdd = item.type === 'add';
                 const sign = isAdd ? '+' : '-';
-                return `
-                <div class="history-item">
-                    <div class="history-header">
-                        <span class="transaction-id">ADJUSTMENT</span>
-                        <span class="history-status status-${item.type}">${item.type}</span>
-                    </div>
-                    <div class="history-body">
-                        <div class="details">
-                            <p>${item.reason || 'Admin adjustment'}</p>
-                            <small>${new Date(item.timestamp).toLocaleString()}</small>
-                        </div>
-                        <span class="amount" style="color: ${isAdd ? 'var(--success)' : 'var(--danger)'};">${sign}${item.amount.toFixed(2)} Coin</span>
-                    </div>
-                </div>`;
+                return `<div class="history-item"><div class="history-header"><span class="transaction-id">ADJUSTMENT</span><span class="history-status status-${item.type}">${item.type}</span></div><div class="history-body"><div class="details"><p>${item.reason || 'Admin adjustment'}</p><small>${new Date(item.timestamp).toLocaleString()}</small></div><span class="amount" style="color: ${isAdd ? 'var(--success)' : 'var(--danger)'};">${sign}${item.amount.toFixed(2)} Coin</span></div></div>`;
             }).join('');
         };
 
@@ -613,9 +635,10 @@
                     if (pageId === 'profile-page') { 
                         renderWithdrawalHistory(); 
                         renderSuperTaskHistory();
-                        renderAdminTransactionHistory(); // Render new history
+                        renderAdminTransactionHistory();
                     }
                     if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
+                    if (pageId === 'referral-page') { renderReferralPage(); } // Load referral page content
                 });
             });
         };
@@ -701,26 +724,26 @@
             const db = firebase.database();
             try {
                 const userRef = db.ref(`users/${tgUser.id}`);
-                userState.balance -= amount;
-                renderUI(); 
-                
                 await userRef.child('balance').set(firebase.database.ServerValue.increment(-amount));
+                userState.balance -= amount; // Optimistic update
+                
                 const reqId = db.ref('withdrawals/pending').push().key;
                 const newRequest = { id: reqId, userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, method: selectedMethod.name, account: accountNumber, amount: amount, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
                 await db.ref(`withdrawals/pending/${reqId}`).set(newRequest);
                 
                 userTransactions.unshift({ ...newRequest, timestamp: Date.now() });
-                renderWithdrawalHistory(); 
                 
                 tg.HapticFeedback.notificationOccurred('success');
                 showPopup(`<h2>Request Submitted!</h2><p>আপনি ${amount.toFixed(2)} Coin উত্তোলন করেছেন। এডমিন রিভিউ করে আপনার পেমেন্টটি কিছুক্ষণের মধ্যে করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
                 document.getElementById('withdraw-form').reset();
             } catch (error) {
+                await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(amount)); // Revert on failure
                 userState.balance += amount;
                 tg.HapticFeedback.notificationOccurred('error'); 
                 tg.showAlert("Failed to submit request. Your balance has been restored.");
             } finally {
                 renderUI();
+                renderWithdrawalHistory();
                 btn.disabled = false;
                 btn.textContent = 'Submit Request';
             }
@@ -767,17 +790,7 @@
 
                     const el = document.createElement('div');
                     el.className = 'super-task-card';
-                    el.innerHTML = `
-                        <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
-                        <div class="task-content">
-                            <h3>${task.title}</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p>
-                            <div class="task-meta">
-                                <span class="reward">Reward: ${task.reward} Coin</span>
-                                <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
-                            </div>
-                            ${buttonHtml}
-                        </div>`;
+                    el.innerHTML = `<img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>${buttonHtml}</div>`;
                     container.appendChild(el);
                 });
             } else {
@@ -789,35 +802,7 @@
             const task = appConfig.superTasks[taskId];
             const detailContainer = document.getElementById('super-task-detail-view');
             
-            detailContainer.innerHTML = `
-                <button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
-                <div class="super-task-card" style="margin-bottom:0;">
-                     <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
-                     <div class="task-content">
-                        <h3>${task.title}</h3>
-                        <p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
-                        <div class="task-meta">
-                            <span class="reward">Reward: ${task.reward} Coin</span>
-                            <span class="limit">${task.completions || 0} / ${task.limit} Done</span>
-                        </div>
-                        <a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a>
-                        
-                        <form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')">
-                            <h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4>
-                            <div class="form-group">
-                                <label for="proof-text">Work Proof (optional):</label>
-                                <textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="screenshot-link">Screenshot Link:</label>
-                                <input type="url" id="screenshot-link" class="form-control" placeholder="https://example.com/image.png" required>
-                                <a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.screenshotUploadUrl || 'https://imgbb.com'}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-top: 5px; display:inline-block;">Create screenshot link here</a>
-                            </div>
-                            <button type="submit" class="action-btn" style="width:100%;">Submit Task</button>
-                        </form>
-                     </div>
-                </div>
-            `;
+            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button><div class="super-task-card" style="margin-bottom:0;"><img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div><a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a><form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')"><h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4><div class="form-group"><label for="proof-text">Work Proof (optional):</label><textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea></div><div class="form-group"><label for="screenshot-link">Screenshot Link:</label><input type="url" id="screenshot-link" class="form-control" placeholder="https://example.com/image.png" required><a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.screenshotUploadUrl || 'https://imgbb.com'}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-top: 5px; display:inline-block;">Create screenshot link here</a></div><button type="submit" class="action-btn" style="width:100%;">Submit Task</button></form></div></div>`;
             
             document.getElementById('super-task-list-view').style.display = 'none';
             detailContainer.style.display = 'block';
@@ -837,15 +822,7 @@
             const screenshotLink = document.getElementById('screenshot-link').value;
 
             const db = firebase.database();
-            const submissionData = {
-                userId: tgUser.id,
-                userName: `${userState.firstName} ${userState.lastName}`,
-                taskId: taskId,
-                proofText: proofText,
-                screenshotLink: screenshotLink,
-                status: 'pending',
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
+            const submissionData = { userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, taskId: taskId, proofText: proofText, screenshotLink: screenshotLink, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
 
             try {
                 await db.ref(`superTaskSubmissions/pending`).push(submissionData);

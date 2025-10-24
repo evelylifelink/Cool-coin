@@ -35,6 +35,7 @@
         .wallet-card { flex: 1; padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .wallet-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
         .wallet-card p { font-size: 1.4rem; font-weight: 600; color: var(--primary-color); }
+        .wallet-card p .fa-coins { font-size: 1.2rem; margin-left: 5px; }
 
         .referral-section { padding: 20px; border-radius: 12px; margin: 20px 0; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .referral-section h3 { color: var(--primary-color); margin-bottom: 10px; }
@@ -44,16 +45,23 @@
         .referral-input .copy-btn { border-radius: 0; }
         .referral-input .share-btn { border-radius: 0 8px 8px 0; }
         
-        .premium-ad-box { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; background: linear-gradient(135deg, #3a3200 0%, #2b2300 100%); border: 1px solid var(--primary-color); text-decoration: none; color: white; }
-        .premium-ad-box .icon { font-size: 1.8rem; color: var(--primary-color); }
-        .premium-ad-box .text h4 { margin: 0; font-size: 1rem; }
-        .premium-ad-box .text p { margin: 0; font-size: 0.8rem; opacity: 0.8; }
+        /* Updated Premium Ad Box styles */
+        .premium-ad-box { 
+            display: flex; align-items: center; gap: 15px; padding: 20px; border-radius: 12px; 
+            background: linear-gradient(135deg, #3a3200 0%, #2b2300 100%); 
+            border: 1px solid var(--primary-color); text-decoration: none; color: white;
+            margin-bottom: 20px; /* Added margin */
+        }
+        .premium-ad-box .icon { font-size: 2.2rem; color: var(--primary-color); } /* Increased size */
+        .premium-ad-box .text h4 { margin: 0; font-size: 1.2rem; font-weight: 700; } /* Increased size */
+        .premium-ad-box .text p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8; } /* Increased size */
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-card { padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .stat-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
         .stat-card p { font-size: 1.4rem; font-weight: 600; color: var(--primary-color); }
-        
+        .stat-card p .fa-coins { font-size: 1.2rem; margin-left: 5px; }
+
         .task-container { padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .task-icon-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
         .task-info { flex: 1; }
@@ -76,7 +84,9 @@
         .history-item .history-header { display: flex; justify-content: space-between; align-items: center; }
         .history-header .transaction-id { font-size: 0.9rem; font-weight: 600; color: var(--primary-color); }
         .history-status { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; text-transform: capitalize; }
-        .status-completed { background-color: var(--success); } .status-pending { background-color: var(--pending); } .status-rejected { background-color: var(--danger); }
+        .status-completed, .status-add { background-color: var(--success); } 
+        .status-pending { background-color: var(--pending); } 
+        .status-rejected, .status-subtract { background-color: var(--danger); }
         .history-item .history-body { display: flex; justify-content: space-between; align-items: center; }
         .history-body .details p { margin: 0; font-size: 1rem; font-weight: 500; }
         .history-body .details small { color: var(--text-secondary-dark); font-size: 0.8rem; }
@@ -135,25 +145,26 @@
             <div class="wallet-container">
                 <div class="wallet-card">
                     <h3>Main Balance</h3>
-                    <p><span id="user-balance">0.00</span></p>
+                    <p><span id="user-balance">0.00</span> <i class="fas fa-coins"></i></p>
                 </div>
                 <div class="wallet-card">
                     <h3>Earning Wallet</h3>
-                    <p><span id="earning-wallet-balance">0.00</span></p>
+                    <p><span id="earning-wallet-balance">0.00</span> <i class="fas fa-coins"></i></p>
                 </div>
             </div>
         </header>
 
         <main id="main-content">
             <div id="home-page" class="page active">
+                <!-- Swapped order and updated styles via CSS -->
+                <div id="home-premium-ad-section"></div>
                 <div id="home-referral-section"></div>
-                <div id="home-premium-ad-section" style="margin-top: 20px;"></div>
 
                 <div class="stats-grid">
                     <div class="stat-card"><h3>Today's Ads</h3><p id="daily-ads-watched">0 / 0</p></div>
                     <div class="stat-card"><h3>Total Referrals</h3><p id="referral-count">0</p></div>
                     <div class="stat-card"><h3>Total Ads Watched</h3><p id="total-ads-watched">0</p></div>
-                    <div class="stat-card"><h3>Total Income</h3><p id="total-earned">0.00</p></div>
+                    <div class="stat-card"><h3>Total Income</h3><p id="total-earned">0.00 <i class="fas fa-coins"></i></p></div>
                 </div>
                 <div id="dynamic-links-container" style="margin-top: 20px;"></div>
             </div>
@@ -162,7 +173,9 @@
                 <div class="task-container">
                     <div class="task-info">
                         <h3>Earning Wallet</h3>
-                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin: 10px 0;"><span id="earning-wallet-balance-display">0.00</span> Coin</p>
+                        <p style="font-size: 1.8rem; font-weight: 700; color: var(--primary-color); margin: 10px 0;">
+                            <span id="earning-wallet-balance-display">0.00</span> Coin
+                        </p>
                         <small>Minimum 100 Coin to move to main balance.</small>
                     </div>
                     <button id="move-to-balance-btn" class="action-btn" style="margin-left: auto;" disabled>Move</button>
@@ -197,6 +210,12 @@
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Super Task History</h2>
                     <div id="super-task-history-list" class="history-list"></div>
                  </div>
+                 
+                 <!-- New Admin Adjustments History Section -->
+                 <div id="admin-transactions-section" style="margin-top: 20px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 10px;">Admin Adjustments</h2>
+                    <div id="admin-transactions-list" class="history-list"></div>
+                 </div>
             </div>
         </main>
 
@@ -214,7 +233,6 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Existing code from original file ---
         const tg = window.Telegram.WebApp;
         const firebaseConfig = {
             apiKey: "AIzaSyB-Q0i3494RYdr6i_H43klTP0B7VSfKkyY",
@@ -230,6 +248,7 @@
         let appConfig = {}; let userState = {}; let tgUser = {}; let earningWalletBalance = 0;
         let userTransactions = [];
         let userSuperTaskSubmissions = [];
+        let adminTransactions = []; // For admin adjustments
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -239,8 +258,9 @@
             popupBody.innerHTML = content;
             popup.style.display = 'flex';
             if (!closable) {
-                const closeButton = popup.querySelector('.popup-close-btn');
-                if (closeButton) closeButton.style.display = 'none';
+                popup.addEventListener('click', (e) => {
+                    if (e.target.id === 'popup') e.stopPropagation();
+                });
             }
         };
         const closePopup = () => { popup.style.display = 'none'; };
@@ -275,8 +295,9 @@
 
                 const historyPromise = loadTransactionHistory(db);
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
+                const adminHistoryPromise = loadAdminTransactionHistory(db); // Load admin adjustments
 
-                await Promise.all([historyPromise, superTaskHistoryPromise]);
+                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise]);
                 updateProgress(80);
 
                 loadAdSdk(appConfig.adZoneId);
@@ -288,20 +309,27 @@
                 setTimeout(() => {
                     document.getElementById('app-loader').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
-                    if (appConfig.welcomeMessage && !userState.welcomed) {
-                        const continueButtonHtml = appConfig.welcomeMessageUrl 
-                            ? `<button class="popup-close-btn" onclick="window.Telegram.WebApp.openLink('${appConfig.welcomeMessageUrl}'); document.getElementById('popup').style.display='none';">Continue</button>`
-                            : `<button class="popup-close-btn">Continue</button>`;
-                        
-                        showPopup(`<h2>Welcome!</h2><p>${appConfig.welcomeMessage}</p>${continueButtonHtml}`);
-                        db.ref(`users/${tgUser.id}/welcomed`).set(true);
+                    
+                    // MODIFIED: Welcome message logic to show every time
+                    if (appConfig.welcomeMessage) {
+                        const premiumGuide = `
+                            <div style="text-align: left; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-dark); font-size: 0.9rem;">
+                                <h4 style="color: var(--primary-color); margin-bottom: 8px;">প্রিমিয়াম গাইডলাইন:</h4>
+                                <p style="margin-bottom: 5px;">১. প্রিমিয়াম নিতে 'Join Now' বাটনে ক্লিক করে যোগাযোগ করুন।</p>
+                                <p style="margin-bottom: 5px;">২. আনলিমিটেড ইনকামের সুবিধা উপভোগ করুন।</p>
+                            </div>
+                        `;
+                        const buttonsHtml = `
+                            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                                <button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl || ''}'); document.getElementById('popup').style.display='none';">Join Now</button>
+                                <button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">বুঝেছি</button>
+                            </div>
+                        `;
+                        showPopup(`<h2>Welcome!</h2><p>${appConfig.welcomeMessage}</p>${premiumGuide}${buttonsHtml}`, false);
                     }
                 }, 300);
             } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
         };
-        
-        // --- Existing loadUserData, handleWatchAd, handleMoveToBalance etc. ---
-        // (No changes to these core functions, only UI rendering functions will be modified/added)
         
         const loadUserData = async (db) => {
             const userRef = db.ref(`users/${tgUser.id}`);
@@ -362,6 +390,19 @@
             });
             userSuperTaskSubmissions.sort((a, b) => b.timestamp - a.timestamp);
         };
+
+        // NEW: Load Admin Transaction History
+        const loadAdminTransactionHistory = async (db) => {
+            adminTransactions = [];
+            const historyRef = db.ref(`adminTransactions/${tgUser.id}`).orderByChild('timestamp');
+            const snapshot = await historyRef.once('value');
+            if (snapshot.exists()) {
+                snapshot.forEach(childSnap => {
+                    adminTransactions.push(childSnap.val());
+                });
+            }
+            adminTransactions.reverse(); // Show latest first
+        };
         
         const renderUI = () => {
             document.getElementById('user-photo').src = userState.photoUrl || 'https://via.placeholder.com/80';
@@ -380,12 +421,11 @@
             renderHomeReferralSection(); renderHomePremiumAd();
         };
 
-        // NEW: Render Referral Section on Home Page
         const renderHomeReferralSection = () => {
             const container = document.getElementById('home-referral-section');
             if(!container) return;
             const refLink = `https://t.me/${appConfig.botUsername || 'your_bot'}/app?startapp=${tgUser.id}`;
-            container.innerHTML = `<div class="referral-section" style="margin-top:0;">
+            container.innerHTML = `<div class="referral-section">
                 <h3>Refer & Earn More!</h3>
                 <div class="referral-input">
                     <input type="text" id="home-referral-link" value="${refLink}" readonly>
@@ -395,7 +435,6 @@
             </div>`;
         };
 
-        // NEW: Render Premium Ad Box on Home Page
         const renderHomePremiumAd = () => {
             const container = document.getElementById('home-premium-ad-section');
             if(!container || !appConfig.premiumAccountUrl) return;
@@ -486,7 +525,6 @@
             } finally { btn.textContent = 'Move'; renderUI(); }
         };
 
-        // UPDATED: Withdrawal History with new design
         const renderWithdrawalHistory = () => {
             const listEl = document.getElementById('withdrawal-history-list');
             if(!listEl) return;
@@ -507,7 +545,6 @@
                 </div>`).join('');
         };
         
-        // NEW: Super Task History
         const renderSuperTaskHistory = () => {
             const listEl = document.getElementById('super-task-history-list');
             if(!listEl) return;
@@ -532,6 +569,34 @@
             }).join('');
         };
 
+        // NEW: Render Admin Transaction History
+        const renderAdminTransactionHistory = () => {
+            const listEl = document.getElementById('admin-transactions-list');
+            if (!listEl) return;
+            if (adminTransactions.length === 0) {
+                listEl.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No adjustments from admin found.</p>';
+                return;
+            }
+            listEl.innerHTML = adminTransactions.map(item => {
+                const isAdd = item.type === 'add';
+                const sign = isAdd ? '+' : '-';
+                return `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span class="transaction-id">ADJUSTMENT</span>
+                        <span class="history-status status-${item.type}">${item.type}</span>
+                    </div>
+                    <div class="history-body">
+                        <div class="details">
+                            <p>${item.reason || 'Admin adjustment'}</p>
+                            <small>${new Date(item.timestamp).toLocaleString()}</small>
+                        </div>
+                        <span class="amount" style="color: ${isAdd ? 'var(--success)' : 'var(--danger)'};">${sign}${item.amount.toFixed(2)} Coin</span>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
         const setupNavigation = () => {
             const navButtons = document.querySelectorAll('.nav-btn'); const pages = document.querySelectorAll('.page');
             navButtons.forEach(button => {
@@ -542,11 +607,14 @@
                     navButtons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
 
-                    // Reset super task page view
                     document.getElementById('super-task-list-view').style.display = 'block';
                     document.getElementById('super-task-detail-view').style.display = 'none';
                     
-                    if (pageId === 'profile-page') { renderWithdrawalHistory(); renderSuperTaskHistory(); }
+                    if (pageId === 'profile-page') { 
+                        renderWithdrawalHistory(); 
+                        renderSuperTaskHistory();
+                        renderAdminTransactionHistory(); // Render new history
+                    }
                     if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
                 });
             });
@@ -565,8 +633,6 @@
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
         };
         
-        // --- Existing renderAdTask, handleClaimTask etc. are fine ---
-        // New functions for Super Tasks will be added below
         const renderAdTask = () => {
             const container = document.getElementById('ad-task-container');
             if (!container) return;
@@ -609,7 +675,6 @@
             }
         };
 
-        // UPDATED: handleWithdraw with new success popup
         const handleWithdraw = async (e) => {
             if(e.target.id !== 'withdraw-form') return;
             e.preventDefault();
@@ -648,7 +713,7 @@
                 renderWithdrawalHistory(); 
                 
                 tg.HapticFeedback.notificationOccurred('success');
-                showPopup(`<h2>Request Submitted!</h2><p>আপনি ${amount.toFixed(2)} টাকা উত্তোলন করেছেন। এডমিন রিভিউ করে আপনার পেমেন্টটি কিছুক্ষণের মধ্যে করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
+                showPopup(`<h2>Request Submitted!</h2><p>আপনি ${amount.toFixed(2)} Coin উত্তোলন করেছেন। এডমিন রিভিউ করে আপনার পেমেন্টটি কিছুক্ষণের মধ্যে করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
                 document.getElementById('withdraw-form').reset();
             } catch (error) {
                 userState.balance += amount;
@@ -682,8 +747,6 @@
             const link = refLinkInput.value;
             tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join and earn with me!')}`);
         };
-
-        // --- NEW SUPER TASK FUNCTIONS ---
 
         const renderSuperTasksPage = () => {
             const container = document.getElementById('super-tasks-container');
@@ -786,11 +849,11 @@
 
             try {
                 await db.ref(`superTaskSubmissions/pending`).push(submissionData);
-                await loadSuperTaskHistory(db); // Reload history
+                await loadSuperTaskHistory(db); 
                 tg.HapticFeedback.notificationOccurred('success');
                 showPopup(`<h2>Task Submitted!</h2><p>আপনার টাস্ক জমা দেওয়া হয়েছে। এডমিন রিভিউ করে আপনার রিওয়ার্ড যোগ করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
                 showTaskList();
-                renderSuperTasksPage(); // Re-render the list to show pending status
+                renderSuperTasksPage(); 
             } catch (error) {
                 console.error("Task submission failed: ", error);
                 tg.showAlert('Failed to submit task. Please try again.');
@@ -798,11 +861,8 @@
             }
         };
 
-        // Make functions globally accessible for inline onclicks
         window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit };
         
-        // --- END OF NEW FUNCTIONS ---
-
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';
             if (appConfig.tasks) {
@@ -828,7 +888,7 @@
                 referralNotice = `<p style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8;"><b>Note:</b> You need at least <b>${minRefs} referrals</b> to be eligible for withdrawal.</p>`;
             }
 
-            container.innerHTML = `<form id="withdraw-form" class="withdraw-form"><h3>Request Withdraw</h3>${referralNotice}<div class="form-group"><label for="withdraw-method">Method:</label><select id="withdraw-method" required>${optionsHtml}</select></div><div class="form-group"><label for="account-number">Account Number/ID:</label><input type="text" id="account-number" required></div><div class="form-group"><label for="amount">Amount:</label><input type="number" step="any" id="amount" required></div><button type="submit" id="withdraw-submit-btn" class="action-btn" style="width:100%;">Submit Request</button></form>`;
+            container.innerHTML = `<form id="withdraw-form" class="withdraw-form"><h3>Request Withdraw</h3>${referralNotice}<div class="form-group"><label for="withdraw-method">Method:</label><select id="withdraw-method" required>${optionsHtml}</select></div><div class="form-group"><label for="account-number">Account Number/ID:</label><input type="text" id="account-number" required></div><div class="form-group"><label for="amount">Amount (Coin):</label><input type="number" step="any" id="amount" required></div><button type="submit" id="withdraw-submit-btn" class="action-btn" style="width:100%;">Submit Request</button></form>`;
         };
 
         const renderDynamicLinks = () => {

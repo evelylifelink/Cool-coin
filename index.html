@@ -271,13 +271,13 @@
         const showPopup = (content, closable = true) => {
             popupBody.innerHTML = content;
             popup.style.display = 'flex';
-            if (!closable) {
-                const existingOverlay = popup.onclick;
-                popup.onclick = (e) => {
-                    if (e.target.id === 'popup') e.stopPropagation();
-                };
+            if (closable) {
+                popup.onclick = (e) => { if (e.target.id === 'popup' || e.target.classList.contains('popup-close-btn')) closePopup(); };
+            } else {
+                popup.onclick = (e) => { if (e.target.id === 'popup') e.stopPropagation(); };
             }
         };
+
         const closePopup = () => { popup.style.display = 'none'; };
         const updateProgress = (percentage) => { loadingProgress.textContent = `${percentage}%`; };
 
@@ -325,28 +325,48 @@
                     document.getElementById('app-loader').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     
-                    if (appConfig.welcomeMessage) {
-                        const premiumGuide = `<div style="text-align: left; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-dark); font-size: 0.9rem;"><h4 style="color: var(--primary-color); margin-bottom: 8px;">প্রিমিয়াম গাইডলাইন:</h4><p style="margin-bottom: 5px;">১. প্রিমিয়াম নিতে 'Join Now' বাটনে ক্লিক করে যোগাযোগ করুন।</p><p style="margin-bottom: 5px;">২. আনলিমিটেড ইনকামের সুবিধা উপভোগ করুন।</p></div>`;
-                        const buttonsHtml = `<div style="display: flex; gap: 10px; margin-top: 25px;"><button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl || ''}'); document.getElementById('popup').style.display='none';">Join Now</button><button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">বুঝেছি</button></div>`;
-                        showPopup(`<h2>Welcome!</h2><p>${appConfig.welcomeMessage}</p>${premiumGuide}${buttonsHtml}`, false);
+                    if (appConfig.welcomePopup && !userState.welcomed) {
+                        showWelcomePopup();
+                        // You might want to set the `welcomed` flag in Firebase 
+                        // db.ref(`users/${tgUser.id}/welcomed`).set(true);
                     }
-                    
-                    // Premium popup logic
-                    if (appConfig.premiumPopup && appConfig.premiumPopup.message && appConfig.premiumPopup.url) {
-                        setTimeout(() => {
-                            const premiumPopupContent = `
-                                <h2>${appConfig.premiumPopup.title || 'Go Premium!'}</h2>
-                                <p>${appConfig.premiumPopup.message}</p>
-                                <div style="display: flex; gap: 10px; margin-top: 25px;">
-                                    <button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumPopup.url}'); document.getElementById('popup').style.display='none';">প্রিমিয়াম নিন</button>
-                                    <button class="popup-close-btn" style="flex: 1; background: #555;" onclick="document.getElementById('popup').style.display='none';">Close</button>
-                                </div>`;
-                            showPopup(premiumPopupContent, false);
-                        }, 15000); // 15 seconds delay
-                    }
-
                 }, 300);
             } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
+        };
+
+        const showWelcomePopup = () => {
+            const welcomeConf = appConfig.welcomePopup || {};
+            const welcomeTitle = welcomeConf.title || 'Welcome!';
+            const welcomeMessageHtml = welcomeConf.messageHtml || '<p>Welcome to our app!</p>'; // Expects HTML
+            const paymentChannelName = welcomeConf.paymentChannelName || 'Join Payment Channel';
+            const paymentChannelUrl = welcomeConf.paymentChannelUrl;
+            const newsChannelName = welcomeConf.newsChannelName || 'Join News Channel';
+            const newsChannelUrl = welcomeConf.newsChannelUrl;
+            const premiumButtonName = welcomeConf.premiumButtonName || 'Join Premium';
+            const premiumButtonUrl = appConfig.premiumAccountUrl; 
+            const gotItButtonName = welcomeConf.gotItButtonName || 'Go To Home';
+            const gotItButtonUrl = welcomeConf.gotItButtonUrl;
+
+            let channelButtonsHtml = '';
+            if (paymentChannelUrl) {
+                const isJoined = localStorage.getItem('paymentChannelJoined') === 'true';
+                channelButtonsHtml += `<button id="payment-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('payment')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'Joined!' : paymentChannelName}</button>`;
+            }
+            if (newsChannelUrl) {
+                const isJoined = localStorage.getItem('newsChannelJoined') === 'true';
+                channelButtonsHtml += `<button id="news-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('news')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'Joined!' : newsChannelName}</button>`;
+            }
+
+            let mainButtonsHtml = `<div style="display: flex; gap: 10px; margin-top: 25px;">`;
+            if (premiumButtonUrl) {
+                mainButtonsHtml += `<button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${premiumButtonUrl}');">${premiumButtonName}</button>`;
+            }
+            mainButtonsHtml += `<button id="got-it-btn" class="popup-close-btn" style="flex: 1; background: #555;" onclick="window.globalFuncs.handleGotItClick()">${gotItButtonName}</button>`;
+            mainButtonsHtml += `</div>`;
+            
+            const popupContent = `<h2>${welcomeTitle}</h2><div style="text-align: left; max-height: 200px; overflow-y: auto;">${welcomeMessageHtml}</div><div style="margin-top: 20px;">${channelButtonsHtml}</div>${mainButtonsHtml}`;
+
+            showPopup(popupContent, false);
         };
         
         const loadUserData = async (db) => {
@@ -702,12 +722,23 @@
             if(e.target.id !== 'withdraw-form') return;
             e.preventDefault();
 
+            // 1. Referral Check
             const minRefsRequired = appConfig.minimumWithdrawReferrals || 0;
             const userReferrals = userState.referrals || 0;
-            
             if (minRefsRequired > 0 && userReferrals < minRefsRequired) {
                 tg.showAlert(`Withdrawal failed. You need at least ${minRefsRequired} referrals. You currently have ${userReferrals}.`);
                 return;
+            }
+
+            // 2. Super Task Check (NEW)
+            const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
+            const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
+            if (superTaskCheckEnabled && minTasksRequired > 0) {
+                const completedTasksCount = userSuperTaskSubmissions.filter(sub => sub.status === 'completed').length;
+                if (completedTasksCount < minTasksRequired) {
+                    tg.showAlert(`Withdrawal failed. You must complete at least ${minTasksRequired} Super Tasks. You have completed ${completedTasksCount}.`);
+                    return;
+                }
             }
 
             const methodEl = document.getElementById('withdraw-method');
@@ -838,7 +869,61 @@
             }
         };
 
-        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit };
+        const handleChannelJoin = (type) => {
+            const welcomeConf = appConfig.welcomePopup || {};
+            const channels = {
+                payment: { url: welcomeConf.paymentChannelUrl, btnId: 'payment-channel-btn', checkName: 'paymentChannelJoined', name: welcomeConf.paymentChannelName || 'Payment Channel'},
+                news: { url: welcomeConf.newsChannelUrl, btnId: 'news-channel-btn', checkName: 'newsChannelJoined', name: welcomeConf.newsChannelName || 'News Channel'}
+            };
+            const channel = channels[type];
+            if (!channel) return;
+
+            const btn = document.getElementById(channel.btnId);
+            const isJoined = localStorage.getItem(channel.checkName) === 'true';
+
+            if (isJoined) { tg.showAlert('You have already confirmed joining this channel.'); return; }
+
+            let clickState = JSON.parse(localStorage.getItem(`${channel.checkName}_state`) || '{}');
+
+            if (!clickState.clicked) {
+                tg.openLink(channel.url);
+                clickState.clicked = true;
+                localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
+                btn.textContent = 'Check Join';
+                tg.showAlert(`Please join the channel and then click "Check Join" to confirm.`);
+            } else {
+                clickState.attempts = (clickState.attempts || 0) + 1;
+                if (clickState.attempts < 2) {
+                    tg.showAlert(`It seems you haven't joined yet. Please join the channel and try again.`);
+                    localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
+                } else {
+                    localStorage.setItem(channel.checkName, 'true');
+                    btn.style.backgroundColor = 'var(--success)';
+                    btn.textContent = 'Joined!';
+                    btn.disabled = true;
+                    localStorage.removeItem(`${channel.checkName}_state`);
+                }
+            }
+        };
+        
+        const handleGotItClick = () => {
+            const welcomeConf = appConfig.welcomePopup || {};
+            const needsPaymentJoin = !!welcomeConf.paymentChannelUrl;
+            const needsNewsJoin = !!welcomeConf.newsChannelUrl;
+
+            const isPaymentJoined = localStorage.getItem('paymentChannelJoined') === 'true';
+            const isNewsJoined = localStorage.getItem('newsChannelJoined') === 'true';
+
+            if (needsPaymentJoin && !isPaymentJoined) { tg.showAlert('Please join the Payment Channel first and check it.'); return; }
+            if (needsNewsJoin && !isNewsJoined) { tg.showAlert('Please join the News Channel first and check it.'); return; }
+
+            const gotItUrl = welcomeConf.gotItButtonUrl;
+            if (gotItUrl) { tg.openLink(gotItUrl); }
+            
+            closePopup();
+        };
+
+        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';
@@ -859,13 +944,21 @@
             const container = document.getElementById('withdraw-section'); let optionsHtml = '';
             if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} Coin)</option>`; }); }
             
+            let notices = '';
+            // Referral Notice
             const minRefs = appConfig.minimumWithdrawReferrals || 0;
-            let referralNotice = '';
             if (minRefs > 0) {
-                referralNotice = `<p style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8;"><b>Note:</b> You need at least <b>${minRefs} referrals</b> to be eligible for withdrawal.</p>`;
+                notices += `<p>You need at least <b>${minRefs} referrals</b> to withdraw.</p>`;
             }
+            // Super Task Notice (NEW)
+            const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
+            const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
+            if (superTaskCheckEnabled && minTasksRequired > 0) {
+                notices += `<p>You must complete at least <b>${minTasksRequired} Super Tasks</b> to withdraw.</p>`;
+            }
+            const noticeContainer = notices ? `<div style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8; display: flex; flex-direction: column; gap: 5px;">${notices}</div>` : '';
 
-            container.innerHTML = `<form id="withdraw-form" class="withdraw-form"><h3>Request Withdraw</h3>${referralNotice}<div class="form-group"><label for="withdraw-method">Method:</label><select id="withdraw-method" required>${optionsHtml}</select></div><div class="form-group"><label for="account-number">Account Number/ID:</label><input type="text" id="account-number" required></div><div class="form-group"><label for="amount">Amount (Coin):</label><input type="number" step="any" id="amount" required></div><button type="submit" id="withdraw-submit-btn" class="action-btn" style="width:100%;">Submit Request</button></form>`;
+            container.innerHTML = `<form id="withdraw-form" class="withdraw-form"><h3>Request Withdraw</h3>${noticeContainer}<div class="form-group"><label for="withdraw-method">Method:</label><select id="withdraw-method" required>${optionsHtml}</select></div><div class="form-group"><label for="account-number">Account Number/ID:</label><input type="text" id="account-number" required></div><div class="form-group"><label for="amount">Amount (Coin):</label><input type="number" step="any" id="amount" required></div><button type="submit" id="withdraw-submit-btn" class="action-btn" style="width:100%;">Submit Request</button></form>`;
         };
 
         const renderDynamicLinks = () => {

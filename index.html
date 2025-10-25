@@ -326,9 +326,10 @@
                     document.getElementById('app-loader').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     
-                    if (appConfig.welcomePopup && !userState.welcomed) {
+                    // The condition is modified to show the popup on every visit, as requested.
+                    if (appConfig.welcomePopup) {
                         showWelcomePopup();
-                        db.ref(`users/${tgUser.id}/welcomed`).set(true);
+                        // The line that sets 'welcomed' to true has been removed to ensure the popup appears every time.
                     }
                 }, 300);
             } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }

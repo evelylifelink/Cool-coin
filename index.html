@@ -45,16 +45,6 @@
         .referral-input .copy-btn { border-radius: 0; }
         .referral-input .share-btn { border-radius: 0 8px 8px 0; }
         
-        .premium-ad-box { 
-            display: flex; align-items: center; gap: 15px; padding: 20px; border-radius: 12px; 
-            background: linear-gradient(135deg, #3a3200 0%, #2b2300 100%); 
-            border: 1px solid var(--primary-color); text-decoration: none; color: white;
-            margin-bottom: 20px;
-        }
-        .premium-ad-box .icon { font-size: 2.2rem; color: var(--primary-color); }
-        .premium-ad-box .text h4 { margin: 0; font-size: 1.2rem; font-weight: 700; }
-        .premium-ad-box .text p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.8; }
-
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-card { padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .stat-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
@@ -114,6 +104,9 @@
         .nav-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-family: var(--font-family); font-size: 0.75rem; color: var(--text-secondary-dark); transition: color 0.2s; flex-grow: 1; }
         .nav-btn i { font-size: 1.5rem; margin-bottom: 4px; } 
         .nav-btn.active { color: var(--primary-color); }
+        .nav-btn.premium-btn { transform: translateY(-10px); background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #000; border-radius: 50%; width: 60px; height: 60px; font-size: 0.7rem; align-items: center; justify-content: center; border: 3px solid var(--background-dark); }
+        .nav-btn.premium-btn.active { box-shadow: 0 0 15px var(--primary-color); }
+        .nav-btn.premium-btn i { font-size: 1.6rem; margin-bottom: 2px; }
 
         .super-task-card { background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid var(--border-dark); }
         .super-task-card img.task-banner { width: 100%; height: 120px; object-fit: cover; }
@@ -136,6 +129,15 @@
         .referral-list-item .info p { font-size: 1rem; font-weight: 500; }
         .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
         .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
+
+        /* Premium Page Styles */
+        #premium-buttons-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .premium-item-btn { text-decoration: none; color: var(--text-primary-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface-dark); border: 1px solid var(--border-dark); border-radius: 12px; padding: 20px 10px; text-align: center; position: relative; overflow: hidden; }
+        .premium-item-btn .icon { font-size: 2rem; color: var(--primary-color); margin-bottom: 10px; }
+        .premium-item-btn .name { font-weight: 600; font-size: 0.9rem; }
+        .premium-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 5px; font-weight: 700; }
+        .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+        .premium-item-btn.disabled .icon { color: #666; }
     </style>
 </head>
 <body>
@@ -156,13 +158,12 @@
                     <p><span id="earning-wallet-balance">0.00</span> <i class="fas fa-coins"></i></p>
                 </div>
             </div>
+            <button id="withdraw-home-btn" class="action-btn" style="width: 100%; margin-top: 15px; font-size: 1.1rem; padding: 12px;">উত্তোলন করুন</button>
         </header>
 
         <main id="main-content">
             <div id="home-page" class="page active">
-                <div id="home-premium-ad-section"></div>
                 <div id="home-referral-section"></div>
-
                 <div class="stats-grid">
                     <div class="stat-card"><h3>Today's Ads</h3><p id="daily-ads-watched">0 / 0</p></div>
                     <div class="stat-card"><h3>Total Referrals</h3><p id="referral-count">0</p></div>
@@ -190,8 +191,15 @@
                 <h2 style="color: var(--primary-color); margin-top: 25px; margin-bottom: 10px;">Bonus Tasks</h2>
                 <div id="dynamic-tasks-container"></div>
             </div>
+
+            <div id="premium-page" class="page">
+                <h2 id="premium-title" class="page-heading">Premium Zone</h2>
+                <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
+                <div id="premium-buttons-container">
+                    <!-- Premium buttons will be rendered here by JavaScript -->
+                </div>
+            </div>
             
-            <!-- NEW REFERRAL PAGE -->
             <div id="referral-page" class="page">
                 <h2 class="page-heading">Referral History</h2>
                 <div id="referred-by-section">
@@ -216,7 +224,7 @@
                 <div id="super-task-detail-view"></div>
             </div>
 
-            <div id="profile-page" class="page">
+            <div id="withdraw-page" class="page">
                  <div id="withdraw-section"></div>
                  <div id="withdrawal-history-section" style="margin-top: 20px;">
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Withdrawal History</h2>
@@ -236,9 +244,9 @@
         <nav class="bottom-nav">
             <button class="nav-btn active" data-page="home-page"><i class="fas fa-home"></i><span>Home</span></button>
             <button class="nav-btn" data-page="tasks-page"><i class="fas fa-tasks"></i><span>Tasks</span></button>
+            <button class="nav-btn premium-btn" data-page="premium-page"><i class="fas fa-star"></i><span>Premium</span></button>
             <button class="nav-btn" data-page="referral-page"><i class="fas fa-users"></i><span>Referrals</span></button>
             <button class="nav-btn" data-page="super-tasks-page"><i class="fas fa-rocket"></i><span>Super Tasks</span></button>
-            <button class="nav-btn" data-page="profile-page"><i class="fas fa-user-alt"></i><span>Profile</span></button>
         </nav>
     </div>
 
@@ -326,10 +334,8 @@
                     document.getElementById('app-loader').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     
-                    // The condition is modified to show the popup on every visit, as requested.
                     if (appConfig.welcomePopup) {
                         showWelcomePopup();
-                        // The line that sets 'welcomed' to true has been removed to ensure the popup appears every time.
                     }
                 }, 300);
             } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
@@ -379,7 +385,7 @@
                 const startParam = tg.initDataUnsafe.start_param;
                 const referralId = (startParam && !isNaN(startParam)) ? startParam : null;
                 
-                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false };
+                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false, isPremium: false };
                 await userRef.set(userData);
                 
                 if (referralId && referralId != tgUser.id) {
@@ -452,7 +458,64 @@
 
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
-            renderHomeReferralSection(); renderHomePremiumAd();
+            renderHomeReferralSection();
+        };
+
+        const renderPremiumPage = () => {
+            const premiumConfig = appConfig.premiumPage || {};
+            const titleEl = document.getElementById('premium-title');
+            const descEl = document.getElementById('premium-description');
+            const container = document.getElementById('premium-buttons-container');
+
+            titleEl.textContent = premiumConfig.title || 'Premium Zone';
+            descEl.textContent = premiumConfig.description || 'Unlock special features and earn more!';
+            container.innerHTML = '';
+
+            const buttons = premiumConfig.buttons || [];
+            
+            // Render the main premium ad box first if it exists
+            if (appConfig.premiumAccountUrl) {
+                const adBox = document.createElement('a');
+                adBox.href = "#";
+                adBox.onclick = () => { window.Telegram.WebApp.openLink(appConfig.premiumAccountUrl); return false; };
+                adBox.className = 'premium-item-btn';
+                adBox.style.gridColumn = "1 / -1"; // Make it span full width
+                adBox.style.background = "linear-gradient(135deg, #3a3200 0%, #2b2300 100%)";
+                adBox.innerHTML = `<div class="icon"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
+                container.appendChild(adBox);
+            }
+
+            buttons.forEach(button => {
+                if (!button.enabled) return;
+
+                const isPremium = button.type === 'premium';
+                const hasAccess = !isPremium || (isPremium && userState.isPremium);
+
+                const btnEl = document.createElement('a');
+                btnEl.href = hasAccess ? button.link || '#' : '#';
+                if(hasAccess) {
+                    btnEl.onclick = () => { window.Telegram.WebApp.openLink(button.link); return false; };
+                } else {
+                     btnEl.onclick = () => { tg.showAlert('This is a premium feature. Please upgrade to a premium account.'); return false; };
+                }
+                
+                btnEl.className = 'premium-item-btn';
+                if (!hasAccess) {
+                    btnEl.classList.add('disabled');
+                }
+
+                let badgeHtml = '';
+                if(isPremium){
+                     badgeHtml = `<span class="premium-badge">PREMIUM</span>`;
+                }
+
+                btnEl.innerHTML = `
+                    <div class="icon"><i class="${button.icon || 'fas fa-question-circle'}"></i></div>
+                    <div class="name">${button.name || 'Untitled'}</div>
+                    ${badgeHtml}
+                `;
+                container.appendChild(btnEl);
+            });
         };
         
         const renderReferralPage = async () => {
@@ -523,12 +586,6 @@
                     <button class="share-btn" id="home-share-ref-btn"><i class="fas fa-share-alt"></i></button>
                 </div>
             </div>`;
-        };
-
-        const renderHomePremiumAd = () => {
-            const container = document.getElementById('home-premium-ad-section');
-            if(!container || !appConfig.premiumAccountUrl) return;
-            container.innerHTML = `<a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.premiumAccountUrl}'); return false;" class="premium-ad-box"><div class="icon"><i class="fas fa-crown"></i></div><div class="text"><h4>প্রিমিয়াম অ্যাকাউন্ট নিন</h4><p>আনলিমিটেড ইনকাম শুরু করুন</p></div></a>`;
         };
         
         const renderAdProgress = () => {
@@ -653,26 +710,37 @@
             }).join('');
         };
 
+        const navigateToPage = (pageId) => {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.page === pageId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            document.getElementById('super-task-list-view').style.display = 'block';
+            document.getElementById('super-task-detail-view').style.display = 'none';
+            
+            if (pageId === 'withdraw-page') { 
+                renderWithdrawalHistory(); 
+                renderSuperTaskHistory();
+                renderAdminTransactionHistory();
+            }
+            if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
+            if (pageId === 'referral-page') { renderReferralPage(); }
+            if (pageId === 'premium-page') { renderPremiumPage(); }
+        };
+
         const setupNavigation = () => {
-            const navButtons = document.querySelectorAll('.nav-btn'); const pages = document.querySelectorAll('.page');
+            const navButtons = document.querySelectorAll('.nav-btn');
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const pageId = button.dataset.page;
-                    pages.forEach(page => page.classList.remove('active'));
-                    document.getElementById(pageId).classList.add('active');
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-
-                    document.getElementById('super-task-list-view').style.display = 'block';
-                    document.getElementById('super-task-detail-view').style.display = 'none';
-                    
-                    if (pageId === 'profile-page') { 
-                        renderWithdrawalHistory(); 
-                        renderSuperTaskHistory();
-                        renderAdminTransactionHistory();
-                    }
-                    if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
-                    if (pageId === 'referral-page') { renderReferralPage(); } // Load referral page content
+                    navigateToPage(pageId);
                 });
             });
         };
@@ -682,12 +750,13 @@
                 if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
             });
             document.getElementById('dynamic-tasks-container').addEventListener('click', (e) => handleClaimTask(e));
-            document.getElementById('profile-page').addEventListener('submit', (e) => handleWithdraw(e));
+            document.getElementById('withdraw-page').addEventListener('submit', (e) => handleWithdraw(e));
             document.getElementById('home-referral-section').addEventListener('click', (e) => {
                 if (e.target.closest('#home-copy-ref-btn')) copyReferralLink('home-referral-link');
                 if (e.target.closest('#home-share-ref-btn')) shareReferralLink('home-referral-link');
             });
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
+            document.getElementById('withdraw-home-btn').addEventListener('click', () => navigateToPage('withdraw-page'));
         };
         
         const renderAdTask = () => {
@@ -736,7 +805,6 @@
             if(e.target.id !== 'withdraw-form') return;
             e.preventDefault();
 
-            // 1. Referral Check
             const minRefsRequired = appConfig.minimumWithdrawReferrals || 0;
             const userReferrals = userState.referrals || 0;
             if (minRefsRequired > 0 && userReferrals < minRefsRequired) {
@@ -744,7 +812,6 @@
                 return;
             }
 
-            // 2. Super Task Check (NEW)
             const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
             const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
             if (superTaskCheckEnabled && minTasksRequired > 0) {
@@ -770,7 +837,7 @@
             try {
                 const userRef = db.ref(`users/${tgUser.id}`);
                 await userRef.child('balance').set(firebase.database.ServerValue.increment(-amount));
-                userState.balance -= amount; // Optimistic update
+                userState.balance -= amount;
                 
                 const reqId = db.ref('withdrawals/pending').push().key;
                 const newRequest = { id: reqId, userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, method: selectedMethod.name, account: accountNumber, amount: amount, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
@@ -788,7 +855,7 @@
                 showPopup(successMessage);
                 document.getElementById('withdraw-form').reset();
             } catch (error) {
-                await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(amount)); // Revert on failure
+                await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(amount));
                 userState.balance += amount;
                 tg.HapticFeedback.notificationOccurred('error'); 
                 tg.showAlert("Failed to submit request. Your balance has been restored.");
@@ -965,12 +1032,10 @@
             if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} Coin)</option>`; }); }
             
             let notices = '';
-            // Referral Notice
             const minRefs = appConfig.minimumWithdrawReferrals || 0;
             if (minRefs > 0) {
                 notices += `<p>You need at least <b>${minRefs} referrals</b> to withdraw.</p>`;
             }
-            // Super Task Notice (NEW)
             const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
             const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
             if (superTaskCheckEnabled && minTasksRequired > 0) {

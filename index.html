@@ -126,11 +126,20 @@
         .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
         .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
 
-        /* Premium/Daily Job Page Styles */
-        #premium-buttons-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .premium-item-btn { text-decoration: none; color: var(--text-primary-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface-dark); border: 1px solid var(--border-dark); border-radius: 12px; padding: 20px 10px; text-align: center; position: relative; overflow: hidden; }
-        .premium-item-btn .icon { font-size: 2rem; color: var(--primary-color); margin-bottom: 10px; }
-        .premium-item-btn .name { font-weight: 600; font-size: 0.9rem; }
+        /* Premium/Daily Job Page Styles (Menu Bar Style) */
+        #premium-buttons-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .premium-item-btn {
+            text-decoration: none; color: var(--text-primary-dark);
+            display: flex; align-items: center; justify-content: flex-start;
+            background: var(--surface-dark); border: 1px solid var(--border-dark);
+            border-radius: 12px; padding: 15px; text-align: left;
+            position: relative; overflow: hidden; gap: 15px;
+        }
+        .premium-item-btn .icon {
+            font-size: 1.5rem; color: var(--primary-color);
+            width: 30px; text-align: center;
+        }
+        .premium-item-btn .name { font-weight: 500; font-size: 1rem; }
         .premium-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 5px; font-weight: 700; }
         .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
         .premium-item-btn.disabled .icon { color: #666; }
@@ -535,7 +544,6 @@
                 adBox.href = "#";
                 adBox.onclick = () => { window.Telegram.WebApp.openLink(appConfig.premiumAccountUrl); return false; };
                 adBox.className = 'premium-item-btn';
-                adBox.style.gridColumn = "1 / -1";
                 adBox.style.background = "linear-gradient(135deg, #3a3200 0%, #2b2300 100%)";
                 adBox.innerHTML = `<div class="icon"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
                 container.appendChild(adBox);

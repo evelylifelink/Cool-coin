@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
         :root {
             --font-family: 'Poppins', sans-serif;
@@ -136,18 +135,33 @@
         .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
         .premium-item-btn.disabled .icon { color: #666; }
         
-        /* YouTube Video Section Styles */
-        #youtube-video-section { margin-bottom: 20px; }
+        /* Leaderboard Styles */
+        #leaderboard-container { margin-top: 25px; }
+        .leaderboard-item { display: flex; align-items: center; gap: 15px; padding: 10px; background-color: var(--surface-dark); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-dark); }
+        .leaderboard-item .rank { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); width: 30px; text-align: center; }
+        .leaderboard-item .user-pic { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
+        .leaderboard-item .user-info { flex: 1; }
+        .leaderboard-item .user-info .name { font-weight: 600; }
+        .leaderboard-item .user-info .referrals { font-size: 0.85rem; color: var(--text-secondary-dark); }
+        .leaderboard-item .total-referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
+        .leaderboard-item:nth-child(1) .rank { color: #FFD700; }
+        .leaderboard-item:nth-child(2) .rank { color: #C0C0C0; }
+        .leaderboard-item:nth-child(3) .rank { color: #CD7F32; }
+        
+        /* YouTube Tutorial Page Styles */
         .video-search-bar { display: flex; gap: 10px; margin-bottom: 15px; }
         .video-search-bar input { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
-        .swiper-container { width: 100%; height: auto; }
-        .swiper-slide { background: var(--surface-dark); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-dark); }
-        .video-iframe-container { position: relative; width: 100%; padding-top: 56.25%; /* 16:9 Aspect Ratio */ }
+        .video-list-item { background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid var(--border-dark); }
+        .video-iframe-container { position: relative; width: 100%; padding-top: 56.25%; }
         .video-iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .video-info { padding: 15px; }
         .video-info h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1rem; }
         .video-info p { font-size: 0.9rem; color: var(--text-secondary-dark); max-height: 60px; overflow: hidden; }
-        .swiper-button-next, .swiper-button-prev { color: var(--primary-color); }
+        .video-actions { display: flex; gap: 20px; padding: 0 15px 15px; color: var(--text-secondary-dark); }
+        .video-actions .action { cursor: pointer; }
+        .video-actions .action i { margin-right: 5px; }
+        .video-actions .action.liked i { color: var(--primary-color); }
+
     </style>
 </head>
 <body>
@@ -181,6 +195,7 @@
                     <div class="stat-card"><h3>Total Income</h3><p id="total-earned">0.00 <i class="fas fa-coins"></i></p></div>
                 </div>
                 <div id="dynamic-links-container" style="margin-top: 20px;"></div>
+                <div id="leaderboard-container"></div>
             </div>
 
             <div id="tasks-page" class="page">
@@ -229,28 +244,24 @@
             <div id="super-tasks-page" class="page">
                 <div id="super-task-list-view">
                     <h2 class="page-heading">Super Tasks</h2>
-                    
-                    <!-- YouTube Video Section -->
-                    <div id="youtube-video-section">
-                        <div class="video-search-bar">
-                            <input type="text" id="video-search-input" placeholder="Search video by title...">
-                        </div>
-                        <div class="swiper-container">
-                            <div class="swiper-wrapper" id="youtube-videos-container">
-                                <!-- Videos will be loaded here -->
-                            </div>
-                            <!-- Add Pagination -->
-                            <div class="swiper-pagination"></div>
-                            <!-- Add Navigation -->
-                            <div class="swiper-button-next"></div>
-                            <div class="swiper-button-prev"></div>
-                        </div>
-                    </div>
+                    <button class="action-btn" style="width:100%; margin-bottom:20px; padding: 12px; font-size: 1rem;" onclick="window.globalFuncs.showYoutubePage()">
+                        <i class="fab fa-youtube"></i> ইউটিউব টিউটোরিয়াল ভিডিও দেখুন
+                    </button>
                     <hr style="border-color: var(--border-dark); margin: 20px 0;">
-
                     <div id="super-tasks-container"></div>
                 </div>
                 <div id="super-task-detail-view"></div>
+            </div>
+            
+            <div id="youtube-tutorials-page" class="page">
+                <button onclick="window.globalFuncs.showSuperTasksPage()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
+                <h2 class="page-heading">ভিডিও টিউটোরিয়াল</h2>
+                <div class="video-search-bar">
+                    <input type="text" id="video-search-input" placeholder="Search video by title...">
+                </div>
+                <div id="youtube-videos-list-container">
+                    <!-- Videos will be loaded here -->
+                </div>
             </div>
 
             <div id="withdraw-page" class="page">
@@ -282,7 +293,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -303,7 +313,7 @@
         let userSuperTaskSubmissions = [];
         let adminTransactions = [];
         let youtubeVideos = [];
-        let videoSwiper;
+        let leaderboardData = [];
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -347,14 +357,15 @@
                 updateProgress(40);
 
                 await loadUserData(db);
-                updateProgress(60);
+                updateProgress(50);
 
                 const historyPromise = loadTransactionHistory(db);
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
                 const adminHistoryPromise = loadAdminTransactionHistory(db);
                 const youtubeVideosPromise = loadYoutubeVideos(db);
+                const leaderboardPromise = loadLeaderboardData(db);
 
-                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise]);
+                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise]);
                 updateProgress(80);
 
                 loadAdSdk(appConfig.adZoneId);
@@ -485,7 +496,23 @@
                     youtubeVideos.push({ key: child.key, ...child.val() });
                 });
             }
-            youtubeVideos.reverse();
+            // Sort by order field, then reverse to show higher numbers first
+            youtubeVideos.sort((a, b) => (a.order || 0) - (b.order || 0)).reverse();
+        };
+
+        const loadLeaderboardData = async (db) => {
+            leaderboardData = [];
+            const usersRef = db.ref('users').orderByChild('referrals').limitToLast(50);
+            const snapshot = await usersRef.once('value');
+            if (snapshot.exists()) {
+                snapshot.forEach(childSnap => {
+                    const user = childSnap.val();
+                    if(user.referrals > 0) { // Only show users with at least 1 referral
+                        leaderboardData.push(user);
+                    }
+                });
+            }
+            leaderboardData.reverse(); // Show highest referrals first
         };
         
         const renderUI = () => {
@@ -503,6 +530,33 @@
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection();
+            renderLeaderboard();
+        };
+
+        const renderLeaderboard = () => {
+            const container = document.getElementById('leaderboard-container');
+            if (!container) return;
+
+            if (leaderboardData.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let leaderboardHtml = `<h2 class="page-heading" style="text-align:left; font-size: 1.2rem; margin-top:20px;">🏆 Referral Leaderboard</h2>`;
+            leaderboardData.forEach((user, index) => {
+                leaderboardHtml += `
+                    <div class="leaderboard-item">
+                        <span class="rank">${index + 1}</span>
+                        <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="User" class="user-pic">
+                        <div class="user-info">
+                            <div class="name">${user.firstName || ''} ${user.lastName || ''}</div>
+                            <div class="referrals">ID: ${user.id}</div>
+                        </div>
+                        <span class="total-referrals">${user.referrals}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = leaderboardHtml;
         };
 
         const renderPremiumPage = () => {
@@ -769,15 +823,19 @@
                 btn.classList.toggle('active', btn.dataset.page === pageId);
             });
 
-            document.getElementById('super-task-list-view').style.display = 'block';
-            document.getElementById('super-task-detail-view').style.display = 'none';
+            if (pageId === 'super-tasks-page') {
+                showSuperTasksPage();
+            } else {
+                 document.getElementById('super-task-list-view').style.display = 'block';
+                 document.getElementById('super-task-detail-view').style.display = 'none';
+            }
             
             if (pageId === 'withdraw-page') { 
                 renderWithdrawalHistory(); 
                 renderSuperTaskHistory();
                 renderAdminTransactionHistory();
             }
-            if (pageId === 'super-tasks-page') { renderSuperTasksPage(); renderYoutubeVideos(); }
+            if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
             if (pageId === 'referral-page') { renderReferralPage(); }
             if (pageId === 'premium-page') { renderPremiumPage(); }
         };
@@ -801,7 +859,7 @@
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
             document.getElementById('withdraw-home-btn').addEventListener('click', () => navigateToPage('withdraw-page'));
             document.getElementById('video-search-input').addEventListener('keyup', (e) => {
-                renderYoutubeVideos(e.target.value.toLowerCase());
+                renderYoutubeTutorials(e.target.value.toLowerCase());
             });
         };
         
@@ -944,26 +1002,20 @@
                 tasks.reverse();
 
                 tasks.forEach(task => {
-                    // Find all submissions for this task
                     const userSubmissions = userSuperTaskSubmissions.filter(sub => sub.taskId === task.key);
-                    const lastSubmission = userSubmissions.length > 0 ? userSubmissions[0] : null; // Already sorted by date
+                    const lastSubmission = userSubmissions.length > 0 ? userSubmissions[0] : null; 
                     const rejectionCount = userSubmissions.filter(sub => sub.status === 'rejected').length;
 
                     let buttonHtml = '';
                     if (lastSubmission && lastSubmission.status !== 'rejected') {
-                        // If pending or completed, disable the button
                         buttonHtml = `<button class="action-btn task-view-btn" disabled>${lastSubmission.status.charAt(0).toUpperCase() + lastSubmission.status.slice(1)}</button>`;
                     } else if (rejectionCount >= 2) {
-                        // If rejected 2 or more times, permanently disable
                         buttonHtml = `<button class="action-btn task-view-btn" disabled>Submission Limit Reached</button>`;
                     } else {
-                        // If it can be submitted (or resubmitted)
                         const btnText = rejectionCount > 0 ? 'Resubmit Task' : 'View Task';
                         buttonHtml = `<button class="action-btn task-view-btn" onclick="window.globalFuncs.showTaskDetail('${task.key}')">${btnText}</button>`;
                     }
-                     // Hide tasks from the main list if there's any submission for it already
                     if(userSubmissions.length > 0) return;
-
 
                     const el = document.createElement('div');
                     el.className = 'super-task-card';
@@ -978,10 +1030,9 @@
         const showTaskDetail = (taskId) => {
             const task = appConfig.superTasks[taskId];
             const detailContainer = document.getElementById('super-task-detail-view');
-            
             const screenshotUploaderUrl = appConfig.screenshotUploadUrl || 'https://imgbb.com';
 
-            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
+            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showSuperTasksPage()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
             <div class="super-task-card" style="margin-bottom:0;">
                 <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
                 <div class="task-content">
@@ -1111,19 +1162,28 @@
             
             closePopup();
         };
+        
+        const showYoutubePage = () => {
+            navigateToPage('youtube-tutorials-page');
+            renderYoutubeTutorials();
+        };
+        
+        const showSuperTasksPage = () => {
+             navigateToPage('super-tasks-page');
+        };
 
-        const renderYoutubeVideos = (searchTerm = '') => {
-            const container = document.getElementById('youtube-videos-container');
+        const renderYoutubeTutorials = (searchTerm = '') => {
+            const container = document.getElementById('youtube-videos-list-container');
             const filteredVideos = youtubeVideos.filter(video => video.title.toLowerCase().includes(searchTerm));
 
             if (filteredVideos.length === 0) {
                 container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary-dark);">No videos found.</p>';
-                if(videoSwiper) videoSwiper.destroy(true, true);
                 return;
             }
 
+            let likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
+
             container.innerHTML = filteredVideos.map(video => {
-                // Extract YouTube video ID from URL
                 let videoId = '';
                 try {
                     const url = new URL(video.link);
@@ -1134,7 +1194,9 @@
                     }
                 } catch(e) { console.error("Invalid video URL", video.link); }
                 
-                return `<div class="swiper-slide">
+                const isLiked = likedVideos.includes(video.key);
+
+                return `<div class="video-list-item">
                     <div class="video-iframe-container">
                         <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
@@ -1142,25 +1204,47 @@
                         <h4>${video.title}</h4>
                         <p>${video.description}</p>
                     </div>
+                    <div class="video-actions">
+                        <div class="action ${isLiked ? 'liked' : ''}" onclick="window.globalFuncs.toggleVideoLike('${video.key}', this)">
+                            <i class="fas fa-thumbs-up"></i> <span>${isLiked ? 126 : 125}</span>
+                        </div>
+                        <div class="action"><i class="fas fa-comment"></i> <span>12</span></div>
+                        <div class="action"><i class="fas fa-share"></i> <span>23</span></div>
+                    </div>
                 </div>`;
             }).join('');
+        };
+        
+        const toggleVideoLike = (videoKey, element) => {
+            let likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
+            const likeCountSpan = element.querySelector('span');
+            let currentLikes = parseInt(likeCountSpan.textContent);
 
-            if (videoSwiper) { videoSwiper.destroy(true, true); }
-            videoSwiper = new Swiper('.swiper-container', {
-                slidesPerView: 1,
-                spaceBetween: 15,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-            });
+            if (likedVideos.includes(videoKey)) {
+                // Unlike
+                likedVideos = likedVideos.filter(id => id !== videoKey);
+                element.classList.remove('liked');
+                likeCountSpan.textContent = currentLikes - 1;
+            } else {
+                // Like
+                likedVideos.push(videoKey);
+                element.classList.add('liked');
+                likeCountSpan.textContent = currentLikes + 1;
+            }
+            localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
         };
 
-        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField };
+        window.globalFuncs = { 
+            showTaskDetail, 
+            showTaskList, 
+            handleSuperTaskSubmit, 
+            handleChannelJoin, 
+            handleGotItClick, 
+            addScreenshotField,
+            showYoutubePage,
+            showSuperTasksPage,
+            toggleVideoLike
+        };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';

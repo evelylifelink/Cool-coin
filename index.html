@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
         :root {
             --font-family: 'Poppins', sans-serif;
@@ -104,9 +105,6 @@
         .nav-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-family: var(--font-family); font-size: 0.75rem; color: var(--text-secondary-dark); transition: color 0.2s; flex-grow: 1; }
         .nav-btn i { font-size: 1.5rem; margin-bottom: 4px; } 
         .nav-btn.active { color: var(--primary-color); }
-        .nav-btn.premium-btn { transform: translateY(-10px); background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); color: #000; border-radius: 50%; width: 60px; height: 60px; font-size: 0.7rem; align-items: center; justify-content: center; border: 3px solid var(--background-dark); }
-        .nav-btn.premium-btn.active { box-shadow: 0 0 15px var(--primary-color); }
-        .nav-btn.premium-btn i { font-size: 1.6rem; margin-bottom: 2px; }
 
         .super-task-card { background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid var(--border-dark); }
         .super-task-card img.task-banner { width: 100%; height: 120px; object-fit: cover; }
@@ -118,7 +116,6 @@
         .task-view-btn { width: 100%; margin-top: 15px; }
         #super-task-detail-view { display: none; }
 
-        /* Referral Page Styles */
         .referral-user-card { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 12px; background: var(--surface-dark); border: 1px solid var(--border-dark); margin-bottom: 20px; }
         .referral-user-card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
         .referral-user-card .info h4 { font-size: 1.1rem; margin: 0; font-weight: 600; }
@@ -130,7 +127,7 @@
         .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
         .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
 
-        /* Premium Page Styles */
+        /* Premium/Daily Job Page Styles */
         #premium-buttons-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .premium-item-btn { text-decoration: none; color: var(--text-primary-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface-dark); border: 1px solid var(--border-dark); border-radius: 12px; padding: 20px 10px; text-align: center; position: relative; overflow: hidden; }
         .premium-item-btn .icon { font-size: 2rem; color: var(--primary-color); margin-bottom: 10px; }
@@ -138,6 +135,19 @@
         .premium-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 5px; font-weight: 700; }
         .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
         .premium-item-btn.disabled .icon { color: #666; }
+        
+        /* YouTube Video Section Styles */
+        #youtube-video-section { margin-bottom: 20px; }
+        .video-search-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .video-search-bar input { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
+        .swiper-container { width: 100%; height: auto; }
+        .swiper-slide { background: var(--surface-dark); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-dark); }
+        .video-iframe-container { position: relative; width: 100%; padding-top: 56.25%; /* 16:9 Aspect Ratio */ }
+        .video-iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .video-info { padding: 15px; }
+        .video-info h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1rem; }
+        .video-info p { font-size: 0.9rem; color: var(--text-secondary-dark); max-height: 60px; overflow: hidden; }
+        .swiper-button-next, .swiper-button-prev { color: var(--primary-color); }
     </style>
 </head>
 <body>
@@ -193,7 +203,7 @@
             </div>
 
             <div id="premium-page" class="page">
-                <h2 id="premium-title" class="page-heading">Premium Zone</h2>
+                <h2 id="premium-title" class="page-heading">Daily Job</h2>
                 <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
                 <div id="premium-buttons-container">
                     <!-- Premium buttons will be rendered here by JavaScript -->
@@ -219,6 +229,25 @@
             <div id="super-tasks-page" class="page">
                 <div id="super-task-list-view">
                     <h2 class="page-heading">Super Tasks</h2>
+                    
+                    <!-- YouTube Video Section -->
+                    <div id="youtube-video-section">
+                        <div class="video-search-bar">
+                            <input type="text" id="video-search-input" placeholder="Search video by title...">
+                        </div>
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper" id="youtube-videos-container">
+                                <!-- Videos will be loaded here -->
+                            </div>
+                            <!-- Add Pagination -->
+                            <div class="swiper-pagination"></div>
+                            <!-- Add Navigation -->
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                    </div>
+                    <hr style="border-color: var(--border-dark); margin: 20px 0;">
+
                     <div id="super-tasks-container"></div>
                 </div>
                 <div id="super-task-detail-view"></div>
@@ -244,7 +273,7 @@
         <nav class="bottom-nav">
             <button class="nav-btn active" data-page="home-page"><i class="fas fa-home"></i><span>Home</span></button>
             <button class="nav-btn" data-page="tasks-page"><i class="fas fa-tasks"></i><span>Tasks</span></button>
-            <button class="nav-btn premium-btn" data-page="premium-page"><i class="fas fa-star"></i><span>Premium</span></button>
+            <button class="nav-btn" data-page="premium-page"><i class="fas fa-briefcase"></i><span>Daily Job</span></button>
             <button class="nav-btn" data-page="referral-page"><i class="fas fa-users"></i><span>Referrals</span></button>
             <button class="nav-btn" data-page="super-tasks-page"><i class="fas fa-rocket"></i><span>Super Tasks</span></button>
         </nav>
@@ -253,6 +282,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -272,6 +302,8 @@
         let userTransactions = [];
         let userSuperTaskSubmissions = [];
         let adminTransactions = [];
+        let youtubeVideos = [];
+        let videoSwiper;
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -320,8 +352,9 @@
                 const historyPromise = loadTransactionHistory(db);
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
                 const adminHistoryPromise = loadAdminTransactionHistory(db);
+                const youtubeVideosPromise = loadYoutubeVideos(db);
 
-                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise]);
+                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise]);
                 updateProgress(80);
 
                 loadAdSdk(appConfig.adZoneId);
@@ -344,7 +377,7 @@
         const showWelcomePopup = () => {
             const welcomeConf = appConfig.welcomePopup || {};
             const welcomeTitle = welcomeConf.title || 'Welcome!';
-            const welcomeMessageHtml = welcomeConf.messageHtml || '<p>Welcome to our app!</p>'; // Expects HTML
+            const welcomeMessageHtml = welcomeConf.messageHtml || '<p>Welcome to our app!</p>';
             const paymentChannelName = welcomeConf.paymentChannelName || 'Join Payment Channel';
             const paymentChannelUrl = welcomeConf.paymentChannelUrl;
             const newsChannelName = welcomeConf.newsChannelName || 'Join News Channel';
@@ -443,6 +476,17 @@
             }
             adminTransactions.reverse();
         };
+
+        const loadYoutubeVideos = async (db) => {
+            youtubeVideos = [];
+            const snap = await db.ref('config/youtubeVideos').once('value');
+            if(snap.exists()){
+                snap.forEach(child => {
+                    youtubeVideos.push({ key: child.key, ...child.val() });
+                });
+            }
+            youtubeVideos.reverse();
+        };
         
         const renderUI = () => {
             document.getElementById('user-photo').src = userState.photoUrl || 'https://via.placeholder.com/80';
@@ -467,19 +511,18 @@
             const descEl = document.getElementById('premium-description');
             const container = document.getElementById('premium-buttons-container');
 
-            titleEl.textContent = premiumConfig.title || 'Premium Zone';
+            titleEl.textContent = premiumConfig.title || 'Daily Job';
             descEl.textContent = premiumConfig.description || 'Unlock special features and earn more!';
             container.innerHTML = '';
 
             const buttons = premiumConfig.buttons || [];
             
-            // Render the main premium ad box first if it exists
-            if (appConfig.premiumAccountUrl) {
+            if (appConfig.premiumAccountUrl && premiumConfig.showPremiumAdBox === true) {
                 const adBox = document.createElement('a');
                 adBox.href = "#";
                 adBox.onclick = () => { window.Telegram.WebApp.openLink(appConfig.premiumAccountUrl); return false; };
                 adBox.className = 'premium-item-btn';
-                adBox.style.gridColumn = "1 / -1"; // Make it span full width
+                adBox.style.gridColumn = "1 / -1";
                 adBox.style.background = "linear-gradient(135deg, #3a3200 0%, #2b2300 100%)";
                 adBox.innerHTML = `<div class="icon"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
                 container.appendChild(adBox);
@@ -528,7 +571,6 @@
 
             const db = firebase.database();
 
-            // 1. Show who referred the current user
             if (userState.referredBy) {
                 const referrerSnap = await db.ref(`users/${userState.referredBy}`).once('value');
                 if (referrerSnap.exists()) {
@@ -548,7 +590,6 @@
                 referrerContainer.innerHTML = '<p style="text-align:center; padding: 10px 0;">You joined directly without a referral.</p>';
             }
 
-            // 2. Show users referred by the current user
             const referralsSnap = await db.ref('users').orderByChild('referredBy').equalTo(tgUser.id.toString()).once('value');
             if (referralsSnap.exists()) {
                 let referralHtml = '';
@@ -572,7 +613,6 @@
                 myReferralsCount.textContent = 'Total: 0';
             }
         };
-
 
         const renderHomeReferralSection = () => {
             const container = document.getElementById('home-referral-section');
@@ -692,7 +732,18 @@
             
             listEl.innerHTML = userSuperTaskSubmissions.map(item => {
                 const taskDetails = appConfig.superTasks && appConfig.superTasks[item.taskId] ? appConfig.superTasks[item.taskId] : { title: 'Unknown Task', reward: 0 };
-                return `<div class="history-item task-history-item"><div class="history-header"><span class="transaction-id">Task: ${taskDetails.title}</span><span class="history-status status-${item.status}">${item.status}</span></div><div class="history-body"><div class="details"><p>Submitted on:</p><small>${new Date(item.timestamp).toLocaleString()}</small></div><span class="amount">+${taskDetails.reward.toFixed(2)} Coin</span></div></div>`;
+                return `<div class="history-item">
+                    <div class="history-top-row">
+                        <p class="history-method">Task: ${taskDetails.title}</p>
+                        <span class="history-status status-${item.status}">${item.status}</span>
+                    </div>
+                    <div class="history-middle-row">
+                        <p class="history-amount">${item.status === 'completed' ? '+' : ''}${taskDetails.reward.toFixed(2)} <span>Coin</span></p>
+                    </div>
+                    <div class="history-bottom-row">
+                        <p class="history-date">${new Date(item.timestamp).toLocaleString()}</p>
+                    </div>
+                </div>`;
             }).join('');
         };
 
@@ -706,7 +757,7 @@
             listEl.innerHTML = adminTransactions.map(item => {
                 const isAdd = item.type === 'add';
                 const sign = isAdd ? '+' : '-';
-                return `<div class="history-item"><div class="history-header"><span class="transaction-id">ADJUSTMENT</span><span class="history-status status-${item.type}">${item.type}</span></div><div class="history-body"><div class="details"><p>${item.reason || 'Admin adjustment'}</p><small>${new Date(item.timestamp).toLocaleString()}</small></div><span class="amount" style="color: ${isAdd ? 'var(--success)' : 'var(--danger)'};">${sign}${item.amount.toFixed(2)} Coin</span></div></div>`;
+                return `<div class="history-item"><div class="history-top-row"><p class="history-method">${item.reason || 'Admin adjustment'}</p><span class="history-status status-${item.type}">${item.type}</span></div><div class="history-middle-row"><p class="history-amount" style="color: ${isAdd ? 'var(--success)' : 'var(--danger)'};">${sign}${item.amount.toFixed(2)} <span>Coin</span></p></div><div class="history-bottom-row"><p class="history-date">${new Date(item.timestamp).toLocaleString()}</p></div></div>`;
             }).join('');
         };
 
@@ -715,11 +766,7 @@
             document.getElementById(pageId).classList.add('active');
             
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                if (btn.dataset.page === pageId) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+                btn.classList.toggle('active', btn.dataset.page === pageId);
             });
 
             document.getElementById('super-task-list-view').style.display = 'block';
@@ -730,18 +777,14 @@
                 renderSuperTaskHistory();
                 renderAdminTransactionHistory();
             }
-            if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
+            if (pageId === 'super-tasks-page') { renderSuperTasksPage(); renderYoutubeVideos(); }
             if (pageId === 'referral-page') { renderReferralPage(); }
             if (pageId === 'premium-page') { renderPremiumPage(); }
         };
 
         const setupNavigation = () => {
-            const navButtons = document.querySelectorAll('.nav-btn');
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const pageId = button.dataset.page;
-                    navigateToPage(pageId);
-                });
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.addEventListener('click', () => navigateToPage(button.dataset.page));
             });
         };
         
@@ -757,6 +800,9 @@
             });
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
             document.getElementById('withdraw-home-btn').addEventListener('click', () => navigateToPage('withdraw-page'));
+            document.getElementById('video-search-input').addEventListener('keyup', (e) => {
+                renderYoutubeVideos(e.target.value.toLowerCase());
+            });
         };
         
         const renderAdTask = () => {
@@ -888,7 +934,7 @@
             const link = refLinkInput.value;
             tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join and earn with me!')}`);
         };
-
+        
         const renderSuperTasksPage = () => {
             const container = document.getElementById('super-tasks-container');
             container.innerHTML = '';
@@ -898,13 +944,26 @@
                 tasks.reverse();
 
                 tasks.forEach(task => {
-                    const userSubmission = userSuperTaskSubmissions.find(sub => sub.taskId === task.key);
-                    let buttonHtml;
-                    if (userSubmission) {
-                        buttonHtml = `<button class="action-btn task-view-btn" disabled>${userSubmission.status.charAt(0).toUpperCase() + userSubmission.status.slice(1)}</button>`;
+                    // Find all submissions for this task
+                    const userSubmissions = userSuperTaskSubmissions.filter(sub => sub.taskId === task.key);
+                    const lastSubmission = userSubmissions.length > 0 ? userSubmissions[0] : null; // Already sorted by date
+                    const rejectionCount = userSubmissions.filter(sub => sub.status === 'rejected').length;
+
+                    let buttonHtml = '';
+                    if (lastSubmission && lastSubmission.status !== 'rejected') {
+                        // If pending or completed, disable the button
+                        buttonHtml = `<button class="action-btn task-view-btn" disabled>${lastSubmission.status.charAt(0).toUpperCase() + lastSubmission.status.slice(1)}</button>`;
+                    } else if (rejectionCount >= 2) {
+                        // If rejected 2 or more times, permanently disable
+                        buttonHtml = `<button class="action-btn task-view-btn" disabled>Submission Limit Reached</button>`;
                     } else {
-                        buttonHtml = `<button class="action-btn task-view-btn" onclick="window.globalFuncs.showTaskDetail('${task.key}')">View Task</button>`;
+                        // If it can be submitted (or resubmitted)
+                        const btnText = rejectionCount > 0 ? 'Resubmit Task' : 'View Task';
+                        buttonHtml = `<button class="action-btn task-view-btn" onclick="window.globalFuncs.showTaskDetail('${task.key}')">${btnText}</button>`;
                     }
+                     // Hide tasks from the main list if there's any submission for it already
+                    if(userSubmissions.length > 0) return;
+
 
                     const el = document.createElement('div');
                     el.className = 'super-task-card';
@@ -920,10 +979,45 @@
             const task = appConfig.superTasks[taskId];
             const detailContainer = document.getElementById('super-task-detail-view');
             
-            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button><div class="super-task-card" style="margin-bottom:0;"><img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div><a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a><form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')"><h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4><div class="form-group"><label for="proof-text">Work Proof (optional):</label><textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea></div><div class="form-group"><label for="screenshot-link">Screenshot Link:</label><input type="url" id="screenshot-link" class="form-control" placeholder="https://example.com/image.png" required><a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.screenshotUploadUrl || 'https://imgbb.com'}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-top: 5px; display:inline-block;">Create screenshot link here</a></div><button type="submit" class="action-btn" style="width:100%;">Submit Task</button></form></div></div>`;
+            const screenshotUploaderUrl = appConfig.screenshotUploadUrl || 'https://imgbb.com';
+
+            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
+            <div class="super-task-card" style="margin-bottom:0;">
+                <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
+                <div class="task-content">
+                    <h3>${task.title}</h3>
+                    <p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
+                    <div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>
+                    <a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a>
+                    <form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')">
+                        <h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4>
+                        <div class="form-group"><label for="proof-text">Work Proof (optional):</label><textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea></div>
+                        <div class="form-group">
+                            <label>Screenshot Links:</label>
+                             <a href="#" onclick="window.Telegram.WebApp.openLink('${screenshotUploaderUrl}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-bottom: 10px; display:inline-block;">Create screenshot link here</a>
+                            <div id="screenshot-inputs-container">
+                                <input type="url" class="form-control" style="margin-bottom:10px;" placeholder="https://example.com/image.png" required>
+                            </div>
+                            <button type="button" class="action-btn" style="background: #444; color: white; padding: 8px 12px; font-size: 0.8rem;" onclick="window.globalFuncs.addScreenshotField()">+ Add Screenshot</button>
+                        </div>
+                        <button type="submit" class="action-btn" style="width:100%;">Submit Task</button>
+                    </form>
+                </div>
+            </div>`;
             
             document.getElementById('super-task-list-view').style.display = 'none';
             detailContainer.style.display = 'block';
+        };
+
+        const addScreenshotField = () => {
+            const container = document.getElementById('screenshot-inputs-container');
+            const newInput = document.createElement('input');
+            newInput.type = 'url';
+            newInput.className = 'form-control';
+            newInput.placeholder = 'https://example.com/another-image.png';
+            newInput.style.marginBottom = '10px';
+            newInput.required = true;
+            container.appendChild(newInput);
         };
 
         const showTaskList = () => {
@@ -937,10 +1031,18 @@
             btn.disabled = true; btn.textContent = 'Submitting...';
 
             const proofText = document.getElementById('proof-text').value;
-            const screenshotLink = document.getElementById('screenshot-link').value;
+            const screenshotLinks = [];
+            document.querySelectorAll('#screenshot-inputs-container input').forEach(input => {
+                if (input.value) screenshotLinks.push(input.value);
+            });
+            if (screenshotLinks.length === 0) {
+                tg.showAlert('Please provide at least one screenshot link.');
+                btn.disabled = false; btn.textContent = 'Submit Task';
+                return;
+            }
 
             const db = firebase.database();
-            const submissionData = { userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, taskId: taskId, proofText: proofText, screenshotLink: screenshotLink, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
+            const submissionData = { userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, taskId: taskId, proofText: proofText, screenshotLinks: screenshotLinks, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
 
             try {
                 await db.ref(`superTaskSubmissions/pending`).push(submissionData);
@@ -1010,7 +1112,55 @@
             closePopup();
         };
 
-        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick };
+        const renderYoutubeVideos = (searchTerm = '') => {
+            const container = document.getElementById('youtube-videos-container');
+            const filteredVideos = youtubeVideos.filter(video => video.title.toLowerCase().includes(searchTerm));
+
+            if (filteredVideos.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary-dark);">No videos found.</p>';
+                if(videoSwiper) videoSwiper.destroy(true, true);
+                return;
+            }
+
+            container.innerHTML = filteredVideos.map(video => {
+                // Extract YouTube video ID from URL
+                let videoId = '';
+                try {
+                    const url = new URL(video.link);
+                    if (url.hostname === 'youtu.be') {
+                        videoId = url.pathname.slice(1);
+                    } else {
+                        videoId = url.searchParams.get('v');
+                    }
+                } catch(e) { console.error("Invalid video URL", video.link); }
+                
+                return `<div class="swiper-slide">
+                    <div class="video-iframe-container">
+                        <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <h4>${video.title}</h4>
+                        <p>${video.description}</p>
+                    </div>
+                </div>`;
+            }).join('');
+
+            if (videoSwiper) { videoSwiper.destroy(true, true); }
+            videoSwiper = new Swiper('.swiper-container', {
+                slidesPerView: 1,
+                spaceBetween: 15,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        };
+
+        window.globalFuncs = { showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';

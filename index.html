@@ -136,32 +136,31 @@
         .premium-item-btn.disabled .icon { color: #666; }
         
         /* Leaderboard Styles */
-        #leaderboard-container { margin-top: 25px; }
-        .leaderboard-item { display: flex; align-items: center; gap: 15px; padding: 10px; background-color: var(--surface-dark); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-dark); }
-        .leaderboard-item .rank { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); width: 30px; text-align: center; }
-        .leaderboard-item .user-pic { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); }
-        .leaderboard-item .user-info { flex: 1; }
-        .leaderboard-item .user-info .name { font-weight: 600; }
-        .leaderboard-item .user-info .referrals { font-size: 0.85rem; color: var(--text-secondary-dark); }
-        .leaderboard-item .total-referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
-        .leaderboard-item:nth-child(1) .rank { color: #FFD700; }
-        .leaderboard-item:nth-child(2) .rank { color: #C0C0C0; }
-        .leaderboard-item:nth-child(3) .rank { color: #CD7F32; }
-        
+        .leaderboard-container { padding: 20px 0; }
+        .leaderboard-heading { color: var(--primary-color); text-align: center; font-size: 1.4rem; margin-bottom: 15px; }
+        .leaderboard-list .leader-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: var(--surface-dark); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-dark); }
+        .leader-item .rank { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); width: 30px; text-align: center; }
+        .leader-item .leader-pfp { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .leader-item .leader-info { flex: 1; }
+        .leader-item .leader-info h4 { font-size: 1rem; font-weight: 600; margin: 0; }
+        .leader-item .leader-info p { font-size: 0.8rem; color: var(--text-secondary-dark); }
+        .leader-item .leader-referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
+
         /* YouTube Tutorial Page Styles */
-        .video-search-bar { display: flex; gap: 10px; margin-bottom: 15px; }
-        .video-search-bar input { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
-        .video-list-item { background: var(--surface-dark); border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid var(--border-dark); }
+        .tutorial-header { padding: 15px; text-align: center; }
+        .tutorial-search-bar { display: flex; gap: 10px; margin: 0 15px 15px; }
+        .tutorial-search-bar input { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
+        .video-list-container { padding: 0 15px; }
+        .video-card { background: var(--surface-dark); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-dark); margin-bottom: 20px; }
         .video-iframe-container { position: relative; width: 100%; padding-top: 56.25%; }
         .video-iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        .video-info { padding: 15px; }
-        .video-info h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1rem; }
-        .video-info p { font-size: 0.9rem; color: var(--text-secondary-dark); max-height: 60px; overflow: hidden; }
-        .video-actions { display: flex; gap: 20px; padding: 0 15px 15px; color: var(--text-secondary-dark); }
-        .video-actions .action { cursor: pointer; }
+        .video-details { padding: 15px; }
+        .video-details h4 { color: var(--primary-color); margin-bottom: 8px; font-size: 1.1rem; }
+        .video-details p { font-size: 0.9rem; color: var(--text-secondary-dark); }
+        .video-actions { display: flex; gap: 20px; padding: 10px 15px; border-top: 1px solid var(--border-dark); }
+        .video-actions .action { cursor: pointer; color: var(--text-secondary-dark); }
         .video-actions .action i { margin-right: 5px; }
-        .video-actions .action.liked i { color: var(--primary-color); }
-
+        .video-actions .action.liked { color: var(--primary-color); }
     </style>
 </head>
 <body>
@@ -195,7 +194,10 @@
                     <div class="stat-card"><h3>Total Income</h3><p id="total-earned">0.00 <i class="fas fa-coins"></i></p></div>
                 </div>
                 <div id="dynamic-links-container" style="margin-top: 20px;"></div>
-                <div id="leaderboard-container"></div>
+                <div id="leaderboard-section" class="leaderboard-container">
+                    <h2 class="leaderboard-heading">Referral Leaderboard</h2>
+                    <div id="leaderboard-list" class="leaderboard-list"></div>
+                </div>
             </div>
 
             <div id="tasks-page" class="page">
@@ -221,7 +223,6 @@
                 <h2 id="premium-title" class="page-heading">Daily Job</h2>
                 <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
                 <div id="premium-buttons-container">
-                    <!-- Premium buttons will be rendered here by JavaScript -->
                 </div>
             </div>
             
@@ -244,24 +245,15 @@
             <div id="super-tasks-page" class="page">
                 <div id="super-task-list-view">
                     <h2 class="page-heading">Super Tasks</h2>
-                    <button class="action-btn" style="width:100%; margin-bottom:20px; padding: 12px; font-size: 1rem;" onclick="window.globalFuncs.showYoutubePage()">
+                    
+                    <button class="action-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-bottom: 20px;" onclick="window.globalFuncs.navigateToPage('youtube-tutorials-page')">
                         <i class="fab fa-youtube"></i> ইউটিউব টিউটোরিয়াল ভিডিও দেখুন
                     </button>
+                    
                     <hr style="border-color: var(--border-dark); margin: 20px 0;">
                     <div id="super-tasks-container"></div>
                 </div>
                 <div id="super-task-detail-view"></div>
-            </div>
-            
-            <div id="youtube-tutorials-page" class="page">
-                <button onclick="window.globalFuncs.showSuperTasksPage()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
-                <h2 class="page-heading">ভিডিও টিউটোরিয়াল</h2>
-                <div class="video-search-bar">
-                    <input type="text" id="video-search-input" placeholder="Search video by title...">
-                </div>
-                <div id="youtube-videos-list-container">
-                    <!-- Videos will be loaded here -->
-                </div>
             </div>
 
             <div id="withdraw-page" class="page">
@@ -278,6 +270,17 @@
                     <h2 style="color: var(--primary-color); margin-bottom: 10px;">Admin Adjustments</h2>
                     <div id="admin-transactions-list" class="history-list"></div>
                  </div>
+            </div>
+
+            <div id="youtube-tutorials-page" class="page" style="padding: 0;">
+                <div class="tutorial-header">
+                    <h2 class="page-heading">Tutorial Videos</h2>
+                    <p style="color: var(--text-secondary-dark); margin-top: -10px;">আমাদের কাজগুলো সম্পূর্ণ শিখুন</p>
+                </div>
+                <div class="tutorial-search-bar">
+                    <input type="text" id="video-search-input" placeholder="Search video by title...">
+                </div>
+                <div id="video-list-container" class="video-list-container"></div>
             </div>
         </main>
 
@@ -313,7 +316,6 @@
         let userSuperTaskSubmissions = [];
         let adminTransactions = [];
         let youtubeVideos = [];
-        let leaderboardData = [];
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -357,13 +359,13 @@
                 updateProgress(40);
 
                 await loadUserData(db);
-                updateProgress(50);
+                updateProgress(60);
 
                 const historyPromise = loadTransactionHistory(db);
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
                 const adminHistoryPromise = loadAdminTransactionHistory(db);
                 const youtubeVideosPromise = loadYoutubeVideos(db);
-                const leaderboardPromise = loadLeaderboardData(db);
+                const leaderboardPromise = renderLeaderboard();
 
                 await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise]);
                 updateProgress(80);
@@ -496,23 +498,7 @@
                     youtubeVideos.push({ key: child.key, ...child.val() });
                 });
             }
-            // Sort by order field, then reverse to show higher numbers first
-            youtubeVideos.sort((a, b) => (a.order || 0) - (b.order || 0)).reverse();
-        };
-
-        const loadLeaderboardData = async (db) => {
-            leaderboardData = [];
-            const usersRef = db.ref('users').orderByChild('referrals').limitToLast(50);
-            const snapshot = await usersRef.once('value');
-            if (snapshot.exists()) {
-                snapshot.forEach(childSnap => {
-                    const user = childSnap.val();
-                    if(user.referrals > 0) { // Only show users with at least 1 referral
-                        leaderboardData.push(user);
-                    }
-                });
-            }
-            leaderboardData.reverse(); // Show highest referrals first
+            youtubeVideos.reverse();
         };
         
         const renderUI = () => {
@@ -530,33 +516,6 @@
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection();
-            renderLeaderboard();
-        };
-
-        const renderLeaderboard = () => {
-            const container = document.getElementById('leaderboard-container');
-            if (!container) return;
-
-            if (leaderboardData.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            let leaderboardHtml = `<h2 class="page-heading" style="text-align:left; font-size: 1.2rem; margin-top:20px;">🏆 Referral Leaderboard</h2>`;
-            leaderboardData.forEach((user, index) => {
-                leaderboardHtml += `
-                    <div class="leaderboard-item">
-                        <span class="rank">${index + 1}</span>
-                        <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="User" class="user-pic">
-                        <div class="user-info">
-                            <div class="name">${user.firstName || ''} ${user.lastName || ''}</div>
-                            <div class="referrals">ID: ${user.id}</div>
-                        </div>
-                        <span class="total-referrals">${user.referrals}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = leaderboardHtml;
         };
 
         const renderPremiumPage = () => {
@@ -823,12 +782,11 @@
                 btn.classList.toggle('active', btn.dataset.page === pageId);
             });
 
-            if (pageId === 'super-tasks-page') {
-                showSuperTasksPage();
-            } else {
-                 document.getElementById('super-task-list-view').style.display = 'block';
-                 document.getElementById('super-task-detail-view').style.display = 'none';
-            }
+            const profileHeader = document.querySelector('.profile-header');
+            profileHeader.style.display = pageId === 'youtube-tutorials-page' ? 'none' : 'flex';
+
+            document.getElementById('super-task-list-view').style.display = 'block';
+            document.getElementById('super-task-detail-view').style.display = 'none';
             
             if (pageId === 'withdraw-page') { 
                 renderWithdrawalHistory(); 
@@ -838,6 +796,7 @@
             if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
             if (pageId === 'referral-page') { renderReferralPage(); }
             if (pageId === 'premium-page') { renderPremiumPage(); }
+            if (pageId === 'youtube-tutorials-page') { renderYoutubeTutorialsPage(); }
         };
 
         const setupNavigation = () => {
@@ -859,7 +818,7 @@
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
             document.getElementById('withdraw-home-btn').addEventListener('click', () => navigateToPage('withdraw-page'));
             document.getElementById('video-search-input').addEventListener('keyup', (e) => {
-                renderYoutubeTutorials(e.target.value.toLowerCase());
+                renderYoutubeTutorialsPage(e.target.value.toLowerCase());
             });
         };
         
@@ -1017,6 +976,7 @@
                     }
                     if(userSubmissions.length > 0) return;
 
+
                     const el = document.createElement('div');
                     el.className = 'super-task-card';
                     el.innerHTML = `<img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>${buttonHtml}</div>`;
@@ -1030,9 +990,10 @@
         const showTaskDetail = (taskId) => {
             const task = appConfig.superTasks[taskId];
             const detailContainer = document.getElementById('super-task-detail-view');
+            
             const screenshotUploaderUrl = appConfig.screenshotUploadUrl || 'https://imgbb.com';
 
-            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showSuperTasksPage()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
+            detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
             <div class="super-task-card" style="margin-bottom:0;">
                 <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
                 <div class="task-content">
@@ -1162,26 +1123,17 @@
             
             closePopup();
         };
-        
-        const showYoutubePage = () => {
-            navigateToPage('youtube-tutorials-page');
-            renderYoutubeTutorials();
-        };
-        
-        const showSuperTasksPage = () => {
-             navigateToPage('super-tasks-page');
-        };
 
-        const renderYoutubeTutorials = (searchTerm = '') => {
-            const container = document.getElementById('youtube-videos-list-container');
+        const renderYoutubeTutorialsPage = (searchTerm = '') => {
+            const container = document.getElementById('video-list-container');
+            if (!container) return;
+
             const filteredVideos = youtubeVideos.filter(video => video.title.toLowerCase().includes(searchTerm));
 
             if (filteredVideos.length === 0) {
                 container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary-dark);">No videos found.</p>';
                 return;
             }
-
-            let likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
 
             container.innerHTML = filteredVideos.map(video => {
                 let videoId = '';
@@ -1192,59 +1144,94 @@
                     } else {
                         videoId = url.searchParams.get('v');
                     }
-                } catch(e) { console.error("Invalid video URL", video.link); }
+                } catch (e) { console.error("Invalid video URL", video.link); }
                 
-                const isLiked = likedVideos.includes(video.key);
-
-                return `<div class="video-list-item">
+                return `<div class="video-card">
                     <div class="video-iframe-container">
                         <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
-                    <div class="video-info">
+                    <div class="video-details">
                         <h4>${video.title}</h4>
                         <p>${video.description}</p>
                     </div>
                     <div class="video-actions">
-                        <div class="action ${isLiked ? 'liked' : ''}" onclick="window.globalFuncs.toggleVideoLike('${video.key}', this)">
-                            <i class="fas fa-thumbs-up"></i> <span>${isLiked ? 126 : 125}</span>
-                        </div>
-                        <div class="action"><i class="fas fa-comment"></i> <span>12</span></div>
-                        <div class="action"><i class="fas fa-share"></i> <span>23</span></div>
+                        <span class="action" onclick="window.globalFuncs.handleLikeClick(this)">
+                            <i class="far fa-thumbs-up"></i> <span class="like-count">${Math.floor(Math.random() * 500) + 50}</span>
+                        </span>
+                        <span class="action">
+                            <i class="far fa-comment"></i> ${Math.floor(Math.random() * 50) + 5}
+                        </span>
+                        <span class="action">
+                            <i class="fas fa-share"></i> ${Math.floor(Math.random() * 20) + 1}
+                        </span>
                     </div>
                 </div>`;
             }).join('');
         };
         
-        const toggleVideoLike = (videoKey, element) => {
-            let likedVideos = JSON.parse(localStorage.getItem('likedVideos') || '[]');
-            const likeCountSpan = element.querySelector('span');
-            let currentLikes = parseInt(likeCountSpan.textContent);
+        const handleLikeClick = (element) => {
+            const icon = element.querySelector('i');
+            const countSpan = element.querySelector('.like-count');
+            let count = parseInt(countSpan.textContent);
 
-            if (likedVideos.includes(videoKey)) {
-                // Unlike
-                likedVideos = likedVideos.filter(id => id !== videoKey);
+            if (element.classList.contains('liked')) {
                 element.classList.remove('liked');
-                likeCountSpan.textContent = currentLikes - 1;
+                icon.classList.replace('fas', 'far');
+                countSpan.textContent = count - 1;
             } else {
-                // Like
-                likedVideos.push(videoKey);
                 element.classList.add('liked');
-                likeCountSpan.textContent = currentLikes + 1;
+                icon.classList.replace('far', 'fas');
+                countSpan.textContent = count + 1;
             }
-            localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
         };
 
-        window.globalFuncs = { 
-            showTaskDetail, 
-            showTaskList, 
-            handleSuperTaskSubmit, 
-            handleChannelJoin, 
-            handleGotItClick, 
-            addScreenshotField,
-            showYoutubePage,
-            showSuperTasksPage,
-            toggleVideoLike
+        const renderLeaderboard = async () => {
+            const container = document.getElementById('leaderboard-list');
+            if (!container) return;
+            container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Loading Leaderboard...</p>';
+            try {
+                const db = firebase.database();
+                const usersRef = db.ref('users').orderByChild('referrals').limitToLast(50);
+                const snapshot = await usersRef.once('value');
+                
+                if (!snapshot.exists()) {
+                    container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">No users found for leaderboard.</p>';
+                    return;
+                }
+
+                let users = [];
+                snapshot.forEach(child => {
+                    const user = child.val();
+                    if(user.referrals > 0){
+                        users.push(user);
+                    }
+                });
+                users.reverse();
+
+                if (users.length === 0) {
+                     container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Leaderboard is empty right now.</p>';
+                     return;
+                }
+
+                container.innerHTML = users.map((user, index) => `
+                    <div class="leader-item">
+                        <span class="rank">#${index + 1}</span>
+                        <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="pfp" class="leader-pfp">
+                        <div class="leader-info">
+                            <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
+                            <p>@${user.username || 'N/A'}</p>
+                        </div>
+                        <span class="leader-referrals">${user.referrals || 0}</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error("Failed to load leaderboard:", error);
+                container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Could not load leaderboard.</p>';
+            }
         };
+
+        window.globalFuncs = { navigateToPage, showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField, handleLikeClick };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';

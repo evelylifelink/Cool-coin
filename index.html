@@ -126,21 +126,51 @@
         .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
         .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
 
-        /* Premium/Daily Job Page Styles (Menu Bar Style) */
-        #premium-buttons-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .premium-item-btn {
-            text-decoration: none; color: var(--text-primary-dark);
-            display: flex; align-items: center; justify-content: flex-start;
-            background: var(--surface-dark); border: 1px solid var(--border-dark);
-            border-radius: 12px; padding: 15px; text-align: left;
-            position: relative; overflow: hidden; gap: 15px;
+        /* Premium/Daily Job Page Styles */
+        #premium-buttons-container { 
+            display: grid; 
+            grid-template-columns: 1fr; /* Changed to 1 column for menu style */
+            gap: 15px; 
         }
-        .premium-item-btn .icon {
-            font-size: 1.5rem; color: var(--primary-color);
-            width: 30px; text-align: center;
+        .premium-item-btn { 
+            text-decoration: none; 
+            color: var(--text-primary-dark); 
+            display: flex; 
+            flex-direction: row; /* Changed for menu style */
+            align-items: center; 
+            justify-content: flex-start; /* Changed for menu style */
+            background: var(--surface-dark); 
+            border: 1px solid var(--border-dark); 
+            border-radius: 12px; 
+            padding: 15px; /* Adjusted padding */
+            text-align: left; /* Changed for menu style */
+            position: relative; 
+            overflow: hidden; 
         }
-        .premium-item-btn .name { font-weight: 500; font-size: 1rem; }
-        .premium-badge { position: absolute; top: 8px; right: 8px; background: var(--primary-color); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 5px; font-weight: 700; }
+        .premium-item-btn .icon { 
+            font-size: 1.5rem; /* Adjusted icon size */
+            color: var(--primary-color); 
+            margin-right: 15px; /* Added margin to the right */
+            margin-bottom: 0; /* Removed bottom margin */
+            width: 30px; /* Added fixed width */
+            text-align: center;
+        }
+        .premium-item-btn .name { 
+            font-weight: 600; 
+            font-size: 1rem; /* Adjusted font size */
+        }
+        .premium-badge { 
+            position: absolute; 
+            top: 50%; /* Center vertically */
+            transform: translateY(-50%); /* Center vertically */
+            right: 15px; /* Position to the right */
+            background: var(--primary-color); 
+            color: #000; 
+            font-size: 0.65rem; 
+            padding: 2px 6px; 
+            border-radius: 5px; 
+            font-weight: 700; 
+        }
         .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
         .premium-item-btn.disabled .icon { color: #666; }
         
@@ -233,6 +263,7 @@
                 <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
                 <div id="premium-buttons-container">
                 </div>
+                <div id="website-button-container" style="margin-top: 20px;"></div>
             </div>
             
             <div id="referral-page" class="page">
@@ -532,10 +563,12 @@
             const titleEl = document.getElementById('premium-title');
             const descEl = document.getElementById('premium-description');
             const container = document.getElementById('premium-buttons-container');
+            const websiteContainer = document.getElementById('website-button-container');
 
             titleEl.textContent = premiumConfig.title || 'Daily Job';
             descEl.textContent = premiumConfig.description || 'Unlock special features and earn more!';
             container.innerHTML = '';
+            websiteContainer.innerHTML = '';
 
             const buttons = premiumConfig.buttons || [];
             
@@ -544,8 +577,11 @@
                 adBox.href = "#";
                 adBox.onclick = () => { window.Telegram.WebApp.openLink(appConfig.premiumAccountUrl); return false; };
                 adBox.className = 'premium-item-btn';
+                adBox.style.flexDirection = 'column';
+                adBox.style.alignItems = 'center';
+                adBox.style.textAlign = 'center';
                 adBox.style.background = "linear-gradient(135deg, #3a3200 0%, #2b2300 100%)";
-                adBox.innerHTML = `<div class="icon"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
+                adBox.innerHTML = `<div class="icon" style="margin-right: 0; margin-bottom: 10px; font-size: 2rem;"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
                 container.appendChild(adBox);
             }
 
@@ -580,6 +616,10 @@
                 `;
                 container.appendChild(btnEl);
             });
+
+            if (appConfig.websiteUrl) {
+                websiteContainer.innerHTML = `<a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.websiteUrl}'); return false;" class="premium-item-btn"><div class="icon"><i class="fas fa-globe"></i></div><div class="name">Website</div></a>`;
+            }
         };
         
         const renderReferralPage = async () => {

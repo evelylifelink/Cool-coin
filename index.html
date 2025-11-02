@@ -18,7 +18,13 @@
             --success: #27AE60; --danger: #C0392B; --pending: #F39C12;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-family); background-color: var(--background-dark); color: var(--text-primary-dark); -webkit-font-smoothing: antialiased; }
+        body { 
+            font-family: var(--font-family); 
+            background-color: var(--background-dark); 
+            color: var(--text-primary-dark); 
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s, color 0.3s;
+        }
         #app { max-width: 500px; margin: 0 auto; padding-bottom: 80px; background-color: var(--background-dark); }
         .page { display: none; padding: 15px; }
         .page.active { display: block; animation: fadeIn 0.4s ease-in-out; }
@@ -28,6 +34,7 @@
             padding: 25px 15px; border-bottom: 1px solid var(--border-dark);
             display: flex; flex-direction: column; align-items: center; text-align: center;
             background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            position: relative;
         }
         #user-photo { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; margin-bottom: 10px; }
         #user-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
@@ -125,56 +132,40 @@
         .referral-list-item .info p { font-size: 1rem; font-weight: 500; }
         .referral-list-item .bonus { font-size: 1rem; font-weight: 600; color: var(--success); }
         .page-heading { color: var(--primary-color); margin-bottom: 15px; text-align: center; font-size: 1.4rem; }
-
-        /* Premium/Daily Job Page Styles */
+        
         #premium-buttons-container { 
             display: grid; 
-            grid-template-columns: 1fr; /* Changed to 1 column for menu style */
+            grid-template-columns: 1fr;
             gap: 15px; 
         }
         .premium-item-btn { 
             text-decoration: none; 
             color: var(--text-primary-dark); 
             display: flex; 
-            flex-direction: row; /* Changed for menu style */
+            flex-direction: row;
             align-items: center; 
-            justify-content: flex-start; /* Changed for menu style */
+            justify-content: flex-start;
             background: var(--surface-dark); 
             border: 1px solid var(--border-dark); 
             border-radius: 12px; 
-            padding: 15px; /* Adjusted padding */
-            text-align: left; /* Changed for menu style */
+            padding: 15px;
+            text-align: left;
             position: relative; 
             overflow: hidden; 
         }
         .premium-item-btn .icon { 
-            font-size: 1.5rem; /* Adjusted icon size */
+            font-size: 1.5rem;
             color: var(--primary-color); 
-            margin-right: 15px; /* Added margin to the right */
-            margin-bottom: 0; /* Removed bottom margin */
-            width: 30px; /* Added fixed width */
+            margin-right: 15px;
+            margin-bottom: 0;
+            width: 30px;
             text-align: center;
         }
         .premium-item-btn .name { 
             font-weight: 600; 
-            font-size: 1rem; /* Adjusted font size */
+            font-size: 1rem;
         }
-        .premium-badge { 
-            position: absolute; 
-            top: 50%; /* Center vertically */
-            transform: translateY(-50%); /* Center vertically */
-            right: 15px; /* Position to the right */
-            background: var(--primary-color); 
-            color: #000; 
-            font-size: 0.65rem; 
-            padding: 2px 6px; 
-            border-radius: 5px; 
-            font-weight: 700; 
-        }
-        .premium-item-btn.disabled { opacity: 0.5; cursor: not-allowed; }
-        .premium-item-btn.disabled .icon { color: #666; }
-        
-        /* Leaderboard Styles */
+
         .leaderboard-container { padding: 20px 0; }
         .leaderboard-heading { color: var(--primary-color); text-align: center; font-size: 1.4rem; margin-bottom: 15px; }
         .leaderboard-list .leader-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: var(--surface-dark); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-dark); }
@@ -185,7 +176,6 @@
         .leader-item .leader-info p { font-size: 0.8rem; color: var(--text-secondary-dark); }
         .leader-item .leader-referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
 
-        /* YouTube Tutorial Page Styles */
         .tutorial-header { padding: 15px; text-align: center; }
         .tutorial-search-bar { display: flex; gap: 10px; margin: 0 15px 15px; }
         .tutorial-search-bar input { flex-grow: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border-dark); background: #1a1a1a; color: white; font-family: var(--font-family); }
@@ -200,6 +190,80 @@
         .video-actions .action { cursor: pointer; color: var(--text-secondary-dark); }
         .video-actions .action i { margin-right: 5px; }
         .video-actions .action.liked { color: var(--primary-color); }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            --background-dark: #f0f2f5;
+            --surface-dark: #ffffff;
+            --text-primary-dark: #1c1e21;
+            --text-secondary-dark: #65676b;
+            --border-dark: #e0e0e0;
+        }
+
+        body.light-mode #app,
+        body.light-mode .profile-header,
+        body.light-mode .wallet-card,
+        body.light-mode .referral-section,
+        body.light-mode .stat-card,
+        body.light-mode .task-container,
+        body.light-mode .withdraw-form,
+        body.light-mode .bottom-nav,
+        body.light-mode .super-task-card,
+        body.light-mode .referral-user-card,
+        body.light-mode .referral-list-item,
+        body.light-mode .premium-item-btn,
+        body.light-mode .history-item,
+        body.light-mode .popup-content,
+        body.light-mode .leaderboard-list .leader-item,
+        body.light-mode .video-card {
+            background: var(--surface-dark);
+            border-color: var(--border-dark);
+        }
+        
+        body.light-mode .referral-input input,
+        body.light-mode .form-group input,
+        body.light-mode .form-group select,
+        body.light-mode .form-group textarea,
+        body.light-mode .tutorial-search-bar input {
+            background-color: #f0f2f5;
+            color: var(--text-primary-dark);
+            border-color: #dcdfe3;
+        }
+
+        body.light-mode .theme-toggle-btn,
+        body.light-mode .bottom-nav {
+            background: var(--surface-dark);
+            border-top: 1px solid var(--border-dark);
+        }
+        
+        body.light-mode .nav-btn {
+             color: var(--text-secondary-dark);
+        }
+        
+        body.light-mode .nav-btn.active {
+             color: var(--primary-color);
+        }
+
     </style>
 </head>
 <body>
@@ -208,6 +272,7 @@
 
     <div id="app" style="display: none;">
         <header class="profile-header">
+            <button id="theme-toggle-btn" class="theme-toggle-btn"><i class="fas fa-sun"></i></button>
             <img id="user-photo" src="https://via.placeholder.com/80" alt="User">
             <h1 id="user-name">Loading...</h1>
             <div class="wallet-container">
@@ -263,7 +328,8 @@
                 <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
                 <div id="premium-buttons-container">
                 </div>
-                <div id="website-button-container" style="margin-top: 20px;"></div>
+                <div id="premium-promo-image-container" style="margin-top: 20px; text-align: center;">
+                </div>
             </div>
             
             <div id="referral-page" class="page">
@@ -361,6 +427,33 @@
         const popupBody = document.getElementById('popup-body');
         const loadingProgress = document.getElementById('loading-progress');
 
+        const themeToggleButton = document.getElementById('theme-toggle-btn');
+        const themeIcon = themeToggleButton.querySelector('i');
+
+        const applyTheme = (theme) => {
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            } else {
+                document.body.classList.remove('light-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            localStorage.setItem('appTheme', theme);
+        };
+
+        const toggleTheme = () => {
+            const currentTheme = localStorage.getItem('appTheme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        };
+
+        const loadInitialTheme = () => {
+            const savedTheme = localStorage.getItem('appTheme') || 'dark';
+            applyTheme(savedTheme);
+        };
+
         const showPopup = (content, closable = true) => {
             popupBody.innerHTML = content;
             popup.style.display = 'flex';
@@ -386,6 +479,7 @@
         };
 
         const initApp = async () => {
+            loadInitialTheme();
             tg.ready(); tg.expand();
             tgUser = tg.initDataUnsafe.user;
             if (!tgUser || !tgUser.id) { tg.showAlert("User data not found.", () => tg.close()); return; }
@@ -563,62 +657,47 @@
             const titleEl = document.getElementById('premium-title');
             const descEl = document.getElementById('premium-description');
             const container = document.getElementById('premium-buttons-container');
-            const websiteContainer = document.getElementById('website-button-container');
+            const promoImageContainer = document.getElementById('premium-promo-image-container');
 
             titleEl.textContent = premiumConfig.title || 'Daily Job';
-            descEl.textContent = premiumConfig.description || 'Unlock special features and earn more!';
+            descEl.textContent = premiumConfig.description || 'সম্পন্ন করুন এবং আরও আয় করুন!';
             container.innerHTML = '';
-            websiteContainer.innerHTML = '';
+            promoImageContainer.innerHTML = '';
 
-            const buttons = premiumConfig.buttons || [];
-            
-            if (appConfig.premiumAccountUrl && premiumConfig.showPremiumAdBox === true) {
-                const adBox = document.createElement('a');
-                adBox.href = "#";
-                adBox.onclick = () => { window.Telegram.WebApp.openLink(appConfig.premiumAccountUrl); return false; };
-                adBox.className = 'premium-item-btn';
-                adBox.style.flexDirection = 'column';
-                adBox.style.alignItems = 'center';
-                adBox.style.textAlign = 'center';
-                adBox.style.background = "linear-gradient(135deg, #3a3200 0%, #2b2300 100%)";
-                adBox.innerHTML = `<div class="icon" style="margin-right: 0; margin-bottom: 10px; font-size: 2rem;"><i class="fas fa-crown"></i></div><div class="name">প্রিমিয়াম অ্যাকাউন্ট নিন</div>`;
-                container.appendChild(adBox);
-            }
+            const requiredButtons = [
+                { id: 'yari_coin_sell', name: 'Yari Coin sall', icon: 'fas fa-coins' },
+                { id: 'lottery', name: 'লটারি', icon: 'fas fa-ticket-alt' },
+                { id: 'all_job', name: 'আল জব', icon: 'fas fa-briefcase' },
+                { id: 'product_sell', name: 'প্রোডাক্ট সেল', icon: 'fas fa-shopping-bag' },
+                { id: 'website', name: 'ওয়েবসাইট', icon: 'fas fa-globe' }
+            ];
 
-            buttons.forEach(button => {
-                if (!button.enabled) return;
+            const savedButtons = premiumConfig.buttons || [];
 
-                const isPremium = button.type === 'premium';
-                const hasAccess = !isPremium || (isPremium && userState.isPremium);
-
-                const btnEl = document.createElement('a');
-                btnEl.href = hasAccess ? button.link || '#' : '#';
-                if(hasAccess) {
-                    btnEl.onclick = () => { window.Telegram.WebApp.openLink(button.link); return false; };
-                } else {
-                     btnEl.onclick = () => { tg.showAlert('This is a premium feature. Please upgrade to a premium account.'); return false; };
-                }
+            requiredButtons.forEach(reqBtn => {
+                const savedBtn = savedButtons.find(b => b.id === reqBtn.id);
                 
-                btnEl.className = 'premium-item-btn';
-                if (!hasAccess) {
-                    btnEl.classList.add('disabled');
-                }
+                if (savedBtn && savedBtn.enabled) {
+                    const btnEl = document.createElement('a');
+                    btnEl.href = savedBtn.link || '#';
+                    if(savedBtn.link) {
+                        btnEl.onclick = () => { window.Telegram.WebApp.openLink(savedBtn.link); return false; };
+                    } else {
+                         btnEl.onclick = (e) => { e.preventDefault(); tg.showAlert('This button is not configured yet.'); };
+                    }
+                    
+                    btnEl.className = 'premium-item-btn';
 
-                let badgeHtml = '';
-                if(isPremium){
-                     badgeHtml = `<span class="premium-badge">PREMIUM</span>`;
+                    btnEl.innerHTML = `
+                        <div class="icon"><i class="${savedBtn.icon || reqBtn.icon}"></i></div>
+                        <div class="name">${savedBtn.name || reqBtn.name}</div>
+                    `;
+                    container.appendChild(btnEl);
                 }
-
-                btnEl.innerHTML = `
-                    <div class="icon"><i class="${button.icon || 'fas fa-question-circle'}"></i></div>
-                    <div class="name">${button.name || 'Untitled'}</div>
-                    ${badgeHtml}
-                `;
-                container.appendChild(btnEl);
             });
-
-            if (appConfig.websiteUrl) {
-                websiteContainer.innerHTML = `<a href="#" onclick="window.Telegram.WebApp.openLink('${appConfig.websiteUrl}'); return false;" class="premium-item-btn"><div class="icon"><i class="fas fa-globe"></i></div><div class="name">Website</div></a>`;
+            
+            if (premiumConfig.promoImageUrl) {
+                promoImageContainer.innerHTML = `<img src="${premiumConfig.promoImageUrl}" style="max-width: 100%; border-radius: 12px;">`;
             }
         };
         
@@ -854,6 +933,7 @@
         };
         
         const setupEventListeners = () => {
+            themeToggleButton.addEventListener('click', toggleTheme);
             popup.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
             });

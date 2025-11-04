@@ -15,13 +15,13 @@
             --background-dark: #000000; --surface-dark: #1a1a1a;
             --text-primary-dark: #FFFFFF; --text-secondary-dark: #CCCCCC;
             --border-dark: #333333; --accent-color: #FFD700;
-            --success: #27AE60; --danger: #C0392B; --pending: #F39C12;
+            --success: #27AE60; --danger: #C0392B; --pending: #F39C12; --info: #3498DB;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: var(--font-family); 
-            background-color: var(--background-dark); 
-            color: var(--text-primary-dark); 
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-dark);
+            color: var(--text-primary-dark);
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
         }
@@ -37,7 +37,9 @@
             position: relative;
         }
         #user-photo { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary-color); object-fit: cover; margin-bottom: 10px; }
-        #user-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+        .user-name-container { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        #user-name { font-size: 1.4rem; font-weight: 700; }
+        #user-verified-badge { font-size: 1.2rem; color: var(--info); display: none; } /* Hidden by default */
         .wallet-container { display: flex; gap: 15px; margin: 15px 0; width: 100%; }
         .wallet-card { flex: 1; padding: 15px; border-radius: 12px; text-align: center; background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid var(--border-dark); }
         .wallet-card h3 { font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary-dark); text-transform: uppercase; }
@@ -168,13 +170,18 @@
 
         .leaderboard-container { padding: 20px 0; }
         .leaderboard-heading { color: var(--primary-color); text-align: center; font-size: 1.4rem; margin-bottom: 15px; }
+        .leaderboard-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .leaderboard-tabs button { flex: 1; padding: 10px; font-size: 0.9rem; font-weight: 600; border: 1px solid var(--border-dark); background: var(--surface-dark); color: var(--text-secondary-dark); border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .leaderboard-tabs button.active { background: var(--primary-color); color: #000; border-color: var(--primary-color); }
         .leaderboard-list .leader-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: var(--surface-dark); border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-dark); }
         .leader-item .rank { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); width: 30px; text-align: center; }
         .leader-item .leader-pfp { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
         .leader-item .leader-info { flex: 1; }
         .leader-item .leader-info h4 { font-size: 1rem; font-weight: 600; margin: 0; }
         .leader-item .leader-info p { font-size: 0.8rem; color: var(--text-secondary-dark); }
-        .leader-item .leader-referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
+        .leader-item .leader-stats { text-align: right; }
+        .leader-item .leader-stats .referrals { font-size: 1.1rem; font-weight: 600; color: var(--success); }
+        .leader-item .leader-stats .income { font-size: 0.85rem; color: var(--primary-color); }
 
         .tutorial-header { padding: 15px; text-align: center; }
         .tutorial-search-bar { display: flex; gap: 10px; margin: 0 15px 15px; }
@@ -191,78 +198,50 @@
         .video-actions .action i { margin-right: 5px; }
         .video-actions .action.liked { color: var(--primary-color); }
 
-        /* Theme Toggle Button */
-        .theme-toggle-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--surface-dark);
-            border: 1px solid var(--border-dark);
-            color: var(--primary-color);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
+        /* Header Buttons */
+        .header-buttons-container { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; z-index: 5; }
+        .header-btn {
+            background: var(--surface-dark); border: 1px solid var(--border-dark);
+            color: var(--primary-color); width: 40px; height: 40px;
+            border-radius: 50%; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
             transition: background 0.3s, color 0.3s;
         }
 
+        /* Developer Page */
+        .dev-page-content .back-btn { background: none; border: none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .dev-profile-card { padding: 25px; border-radius: 15px; background: var(--surface-dark); border: 1px solid var(--border-dark); text-align: center; margin-bottom: 20px; }
+        .dev-profile-card img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--primary-color); margin-bottom: 15px; }
+        .dev-profile-card .name-container { display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .dev-profile-card .name { font-size: 1.5rem; font-weight: 700; }
+        .dev-profile-card .verified-badge { font-size: 1.3rem; color: var(--info); }
+        .dev-profile-card .bio { font-size: 0.95rem; color: var(--text-secondary-dark); margin-top: 10px; }
+        .company-about-card { padding: 25px; border-radius: 15px; background: var(--surface-dark); border: 1px solid var(--border-dark); }
+        .company-about-card h3 { color: var(--primary-color); margin-bottom: 15px; text-align: center; }
+        .company-about-card .about-content { color: var(--text-secondary-dark); line-height: 1.6; }
+        .company-about-card .about-content * { color: inherit !important; }
+
         /* Light Mode Styles */
         body.light-mode {
-            --background-dark: #f0f2f5;
-            --surface-dark: #ffffff;
-            --text-primary-dark: #1c1e21;
-            --text-secondary-dark: #65676b;
+            --background-dark: #f0f2f5; --surface-dark: #ffffff;
+            --text-primary-dark: #1c1e21; --text-secondary-dark: #65676b;
             --border-dark: #e0e0e0;
         }
-
-        body.light-mode #app,
-        body.light-mode .profile-header,
-        body.light-mode .wallet-card,
-        body.light-mode .referral-section,
-        body.light-mode .stat-card,
-        body.light-mode .task-container,
-        body.light-mode .withdraw-form,
-        body.light-mode .bottom-nav,
-        body.light-mode .super-task-card,
-        body.light-mode .referral-user-card,
-        body.light-mode .referral-list-item,
-        body.light-mode .premium-item-btn,
-        body.light-mode .history-item,
-        body.light-mode .popup-content,
-        body.light-mode .leaderboard-list .leader-item,
-        body.light-mode .video-card {
-            background: var(--surface-dark);
-            border-color: var(--border-dark);
+        body.light-mode #app, body.light-mode .profile-header, body.light-mode .wallet-card, body.light-mode .referral-section,
+        body.light-mode .stat-card, body.light-mode .task-container, body.light-mode .withdraw-form, body.light-mode .bottom-nav,
+        body.light-mode .super-task-card, body.light-mode .referral-user-card, body.light-mode .referral-list-item,
+        body.light-mode .premium-item-btn, body.light-mode .history-item, body.light-mode .popup-content,
+        body.light-mode .leaderboard-list .leader-item, body.light-mode .video-card, body.light-mode .dev-profile-card,
+        body.light-mode .company-about-card, body.light-mode .leaderboard-tabs button {
+            background: var(--surface-dark); border-color: var(--border-dark);
         }
-        
-        body.light-mode .referral-input input,
-        body.light-mode .form-group input,
-        body.light-mode .form-group select,
-        body.light-mode .form-group textarea,
-        body.light-mode .tutorial-search-bar input {
-            background-color: #f0f2f5;
-            color: var(--text-primary-dark);
-            border-color: #dcdfe3;
+        body.light-mode .referral-input input, body.light-mode .form-group input, body.light-mode .form-group select,
+        body.light-mode .form-group textarea, body.light-mode .tutorial-search-bar input {
+            background-color: #f0f2f5; color: var(--text-primary-dark); border-color: #dcdfe3;
         }
-
-        body.light-mode .theme-toggle-btn,
-        body.light-mode .bottom-nav {
-            background: var(--surface-dark);
-            border-top: 1px solid var(--border-dark);
-        }
-        
-        body.light-mode .nav-btn {
-             color: var(--text-secondary-dark);
-        }
-        
-        body.light-mode .nav-btn.active {
-             color: var(--primary-color);
-        }
+        body.light-mode .header-btn, body.light-mode .bottom-nav { background: var(--surface-dark); border-top: 1px solid var(--border-dark); }
+        body.light-mode .nav-btn { color: var(--text-secondary-dark); }
+        body.light-mode .nav-btn.active, body.light-mode .leaderboard-tabs button.active { color: var(--primary-color); }
 
     </style>
 </head>
@@ -272,9 +251,15 @@
 
     <div id="app" style="display: none;">
         <header class="profile-header">
-            <button id="theme-toggle-btn" class="theme-toggle-btn"><i class="fas fa-sun"></i></button>
+            <div class="header-buttons-container">
+                <button id="developer-info-btn" class="header-btn"><i class="fas fa-user-shield"></i></button>
+                <button id="theme-toggle-btn" class="header-btn"><i class="fas fa-sun"></i></button>
+            </div>
             <img id="user-photo" src="https://via.placeholder.com/80" alt="User">
-            <h1 id="user-name">Loading...</h1>
+            <div class="user-name-container">
+                <h1 id="user-name">Loading...</h1>
+                <i id="user-verified-badge" class="fas fa-check-circle"></i>
+            </div>
             <div class="wallet-container">
                 <div class="wallet-card">
                     <h3>Main Balance</h3>
@@ -300,7 +285,12 @@
                 <div id="dynamic-links-container" style="margin-top: 20px;"></div>
                 <div id="leaderboard-section" class="leaderboard-container">
                     <h2 class="leaderboard-heading">Referral Leaderboard</h2>
-                    <div id="leaderboard-list" class="leaderboard-list"></div>
+                    <div class="leaderboard-tabs">
+                        <button id="leaderboard-tab-alltime" class="active">All-Time</button>
+                        <button id="leaderboard-tab-today">Today</button>
+                    </div>
+                    <div id="leaderboard-list-alltime" class="leaderboard-list"></div>
+                    <div id="leaderboard-list-today" class="leaderboard-list" style="display: none;"></div>
                 </div>
             </div>
 
@@ -326,10 +316,8 @@
             <div id="premium-page" class="page">
                 <h2 id="premium-title" class="page-heading">Daily Job</h2>
                 <p id="premium-description" style="text-align: center; margin-bottom: 25px; color: var(--text-secondary-dark);"></p>
-                <div id="premium-buttons-container">
-                </div>
-                <div id="premium-promo-image-container" style="margin-top: 20px; text-align: center;">
-                </div>
+                <div id="premium-buttons-container"></div>
+                <div id="premium-promo-image-container" style="margin-top: 20px; text-align: center;"></div>
             </div>
             
             <div id="referral-page" class="page">
@@ -351,11 +339,9 @@
             <div id="super-tasks-page" class="page">
                 <div id="super-task-list-view">
                     <h2 class="page-heading">Super Tasks</h2>
-                    
                     <button class="action-btn" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-bottom: 20px;" onclick="window.globalFuncs.navigateToPage('youtube-tutorials-page')">
                         <i class="fab fa-youtube"></i> ইউটিউব টিউটোরিয়াল ভিডিও দেখুন
                     </button>
-                    
                     <hr style="border-color: var(--border-dark); margin: 20px 0;">
                     <div id="super-tasks-container"></div>
                 </div>
@@ -387,6 +373,14 @@
                     <input type="text" id="video-search-input" placeholder="Search video by title...">
                 </div>
                 <div id="video-list-container" class="video-list-container"></div>
+            </div>
+
+            <div id="developer-page" class="page">
+                <div class="dev-page-content">
+                    <button class="back-btn" onclick="window.globalFuncs.navigateToPage('home-page')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+                    <div id="developer-profile-section"></div>
+                    <div id="company-about-section"></div>
+                </div>
             </div>
         </main>
 
@@ -499,7 +493,7 @@
                 const superTaskHistoryPromise = loadSuperTaskHistory(db);
                 const adminHistoryPromise = loadAdminTransactionHistory(db);
                 const youtubeVideosPromise = loadYoutubeVideos(db);
-                const leaderboardPromise = renderLeaderboard();
+                const leaderboardPromise = renderLeaderboard('alltime');
 
                 await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise]);
                 updateProgress(80);
@@ -560,12 +554,13 @@
             const userRef = db.ref(`users/${tgUser.id}`);
             const snapshot = await userRef.once('value');
             let userData = snapshot.val();
+            const today = new Date().toISOString().slice(0, 10);
             
             if (!userData) {
                 const startParam = tg.initDataUnsafe.start_param;
                 const referralId = (startParam && !isNaN(startParam)) ? startParam : null;
                 
-                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false, isPremium: false };
+                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referralIncome: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false, isPremium: false, isVerified: false };
                 await userRef.set(userData);
                 
                 if (referralId && referralId != tgUser.id) {
@@ -576,15 +571,26 @@
                         if (currentData) {
                             if (bonusAmount > 0) {
                                 currentData.balance = (currentData.balance || 0) + bonusAmount;
+                                currentData.referralIncome = (currentData.referralIncome || 0) + bonusAmount;
                             }
                             currentData.referrals = (currentData.referrals || 0) + 1;
+                        }
+                        return currentData;
+                    });
+                    
+                    await db.ref(`dailyReferrals/${today}/${referralId}`).transaction(currentData => {
+                        const bonus = parseFloat(appConfig.referralBonus || 0);
+                        if(currentData) {
+                            currentData.count = (currentData.count || 0) + 1;
+                            currentData.income = (currentData.income || 0) + bonus;
+                        } else {
+                            currentData = { count: 1, income: bonus };
                         }
                         return currentData;
                     });
                 }
             }
             
-            const today = new Date().toISOString().slice(0, 10);
             if (userData.lastAdWatchDate !== today) {
                 userData.dailyAdCount = 0; userData.lastAdWatchDate = today;
                 await userRef.update({ dailyAdCount: 0, lastAdWatchDate: today });
@@ -647,6 +653,13 @@
             const earningWalletDisplay = document.getElementById('earning-wallet-balance-display');
             if(earningWalletDisplay) earningWalletDisplay.textContent = earningWalletBalance.toFixed(2);
 
+            const verifiedBadge = document.getElementById('user-verified-badge');
+            if (userState.isVerified) {
+                verifiedBadge.style.display = 'inline-block';
+            } else {
+                verifiedBadge.style.display = 'none';
+            }
+
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection();
@@ -654,50 +667,39 @@
 
         const renderPremiumPage = () => {
             const premiumConfig = appConfig.premiumPage || {};
-            const titleEl = document.getElementById('premium-title');
-            const descEl = document.getElementById('premium-description');
+            document.getElementById('premium-title').textContent = premiumConfig.title || 'Daily Job';
+            document.getElementById('premium-description').textContent = premiumConfig.description || 'সম্পন্ন করুন এবং আরও আয় করুন!';
             const container = document.getElementById('premium-buttons-container');
             const promoImageContainer = document.getElementById('premium-promo-image-container');
-
-            titleEl.textContent = premiumConfig.title || 'Daily Job';
-            descEl.textContent = premiumConfig.description || 'সম্পন্ন করুন এবং আরও আয় করুন!';
             container.innerHTML = '';
             promoImageContainer.innerHTML = '';
 
             const requiredButtons = [
-                { id: 'yari_coin_sell', name: 'Yari Coin sall', icon: 'fas fa-coins' },
-                { id: 'lottery', name: 'লটারি', icon: 'fas fa-ticket-alt' },
-                { id: 'all_job', name: 'আল জব', icon: 'fas fa-briefcase' },
-                { id: 'product_sell', name: 'প্রোডাক্ট সেল', icon: 'fas fa-shopping-bag' },
+                { id: 'yari_coin_sell', name: 'Yari Coin sall', icon: 'fas fa-coins' }, { id: 'lottery', name: 'লটারি', icon: 'fas fa-ticket-alt' },
+                { id: 'all_job', name: 'আল জব', icon: 'fas fa-briefcase' }, { id: 'product_sell', name: 'প্রোডাক্ট সেল', icon: 'fas fa-shopping-bag' },
                 { id: 'website', name: 'ওয়েবসাইট', icon: 'fas fa-globe' }
             ];
-
             const savedButtons = premiumConfig.buttons || [];
 
             requiredButtons.forEach(reqBtn => {
                 const savedBtn = savedButtons.find(b => b.id === reqBtn.id);
-                
                 if (savedBtn && savedBtn.enabled) {
                     const btnEl = document.createElement('a');
                     btnEl.href = savedBtn.link || '#';
-                    if(savedBtn.link) {
-                        btnEl.onclick = () => { window.Telegram.WebApp.openLink(savedBtn.link); return false; };
-                    } else {
-                         btnEl.onclick = (e) => { e.preventDefault(); tg.showAlert('This button is not configured yet.'); };
-                    }
-                    
+                    if(savedBtn.link) { btnEl.onclick = () => { window.Telegram.WebApp.openLink(savedBtn.link); return false; }; } 
+                    else { btnEl.onclick = (e) => { e.preventDefault(); tg.showAlert('This button is not configured yet.'); }; }
                     btnEl.className = 'premium-item-btn';
-
-                    btnEl.innerHTML = `
-                        <div class="icon"><i class="${savedBtn.icon || reqBtn.icon}"></i></div>
-                        <div class="name">${savedBtn.name || reqBtn.name}</div>
-                    `;
+                    btnEl.innerHTML = `<div class="icon"><i class="${savedBtn.icon || reqBtn.icon}"></i></div><div class="name">${savedBtn.name || reqBtn.name}</div>`;
                     container.appendChild(btnEl);
                 }
             });
             
             if (premiumConfig.promoImageUrl) {
-                promoImageContainer.innerHTML = `<img src="${premiumConfig.promoImageUrl}" style="max-width: 100%; border-radius: 12px;">`;
+                let imgHtml = `<img src="${premiumConfig.promoImageUrl}" style="max-width: 100%; border-radius: 12px; cursor: ${premiumConfig.promoImageLink ? 'pointer' : 'default'};">`;
+                if(premiumConfig.promoImageLink){
+                    imgHtml = `<a href="#" onclick="window.Telegram.WebApp.openLink('${premiumConfig.promoImageLink}'); return false;">${imgHtml}</a>`;
+                }
+                promoImageContainer.innerHTML = imgHtml;
             }
         };
         
@@ -805,10 +807,11 @@
                 userState.totalEarned = (userState.totalEarned || 0) + adValue;
 
                 const db = firebase.database(); const userRef = db.ref(`users/${tgUser.id}`);
-                const updates = {};
-                updates.dailyAdCount = userState.dailyAdCount;
-                updates.lifetimeAdCount = userState.lifetimeAdCount;
-                updates.totalEarned = userState.totalEarned;
+                const updates = {
+                    dailyAdCount: userState.dailyAdCount,
+                    lifetimeAdCount: userState.lifetimeAdCount,
+                    totalEarned: userState.totalEarned
+                };
                 if ((userState.dailyAdCount) % appConfig.adsPerBreak === 0 && appConfig.adsPerBreak > 0) {
                     updates.breakUntil = Date.now() + (appConfig.breakDuration * 60000);
                     userState.breakUntil = updates.breakUntil;
@@ -855,9 +858,7 @@
                         <p class="history-method">${item.method} - ${item.account}</p>
                         <span class="history-status status-${item.status}">${item.status}</span>
                     </div>
-                    <div class="history-middle-row">
-                        <p class="history-amount">${item.amount.toFixed(2)} <span>Coin</span></p>
-                    </div>
+                    <div class="history-middle-row"><p class="history-amount">${item.amount.toFixed(2)} <span>Coin</span></p></div>
                     <div class="history-bottom-row">
                         <p class="history-date">${new Date(item.timestamp).toLocaleString()}</p>
                         <p class="history-id">ID: #${item.id.slice(-6)}</p>
@@ -877,12 +878,8 @@
                         <p class="history-method">Task: ${taskDetails.title}</p>
                         <span class="history-status status-${item.status}">${item.status}</span>
                     </div>
-                    <div class="history-middle-row">
-                        <p class="history-amount">${item.status === 'completed' ? '+' : ''}${taskDetails.reward.toFixed(2)} <span>Coin</span></p>
-                    </div>
-                    <div class="history-bottom-row">
-                        <p class="history-date">${new Date(item.timestamp).toLocaleString()}</p>
-                    </div>
+                    <div class="history-middle-row"><p class="history-amount">${item.status === 'completed' ? '+' : ''}${taskDetails.reward.toFixed(2)} <span>Coin</span></p></div>
+                    <div class="history-bottom-row"><p class="history-date">${new Date(item.timestamp).toLocaleString()}</p></div>
                 </div>`;
             }).join('');
         };
@@ -905,25 +902,20 @@
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.page === pageId);
-            });
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === pageId));
 
             const profileHeader = document.querySelector('.profile-header');
-            profileHeader.style.display = pageId === 'youtube-tutorials-page' ? 'none' : 'flex';
+            profileHeader.style.display = (pageId === 'youtube-tutorials-page' || pageId === 'developer-page') ? 'none' : 'flex';
 
             document.getElementById('super-task-list-view').style.display = 'block';
             document.getElementById('super-task-detail-view').style.display = 'none';
             
-            if (pageId === 'withdraw-page') { 
-                renderWithdrawalHistory(); 
-                renderSuperTaskHistory();
-                renderAdminTransactionHistory();
-            }
+            if (pageId === 'withdraw-page') { renderWithdrawalHistory(); renderSuperTaskHistory(); renderAdminTransactionHistory(); }
             if (pageId === 'super-tasks-page') { renderSuperTasksPage(); }
             if (pageId === 'referral-page') { renderReferralPage(); }
             if (pageId === 'premium-page') { renderPremiumPage(); }
             if (pageId === 'youtube-tutorials-page') { renderYoutubeTutorialsPage(); }
+            if (pageId === 'developer-page') { renderDeveloperPage(); }
         };
 
         const setupNavigation = () => {
@@ -934,9 +926,8 @@
         
         const setupEventListeners = () => {
             themeToggleButton.addEventListener('click', toggleTheme);
-            popup.addEventListener('click', (e) => { 
-                if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
-            });
+            document.getElementById('developer-info-btn').addEventListener('click', () => navigateToPage('developer-page'));
+            popup.addEventListener('click', (e) => { if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); });
             document.getElementById('dynamic-tasks-container').addEventListener('click', (e) => handleClaimTask(e));
             document.getElementById('withdraw-page').addEventListener('submit', (e) => handleWithdraw(e));
             document.getElementById('home-referral-section').addEventListener('click', (e) => {
@@ -945,9 +936,10 @@
             });
             document.getElementById('move-to-balance-btn').addEventListener('click', handleMoveToBalance);
             document.getElementById('withdraw-home-btn').addEventListener('click', () => navigateToPage('withdraw-page'));
-            document.getElementById('video-search-input').addEventListener('keyup', (e) => {
-                renderYoutubeTutorialsPage(e.target.value.toLowerCase());
-            });
+            document.getElementById('video-search-input').addEventListener('keyup', (e) => renderYoutubeTutorialsPage(e.target.value.toLowerCase()));
+
+            document.getElementById('leaderboard-tab-alltime').addEventListener('click', () => switchLeaderboardTab('alltime'));
+            document.getElementById('leaderboard-tab-today').addEventListener('click', () => switchLeaderboardTab('today'));
         };
         
         const renderAdTask = () => {
@@ -997,12 +989,10 @@
             e.preventDefault();
 
             const minRefsRequired = appConfig.minimumWithdrawReferrals || 0;
-            const userReferrals = userState.referrals || 0;
-            if (minRefsRequired > 0 && userReferrals < minRefsRequired) {
-                tg.showAlert(`Withdrawal failed. You need at least ${minRefsRequired} referrals. You currently have ${userReferrals}.`);
+            if (minRefsRequired > 0 && (userState.referrals || 0) < minRefsRequired) {
+                tg.showAlert(`Withdrawal failed. You need at least ${minRefsRequired} referrals. You currently have ${userState.referrals || 0}.`);
                 return;
             }
-
             const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
             const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
             if (superTaskCheckEnabled && minTasksRequired > 0) {
@@ -1026,8 +1016,7 @@
             const btn = document.getElementById('withdraw-submit-btn'); btn.disabled = true; btn.textContent = 'Submitting...';
             const db = firebase.database();
             try {
-                const userRef = db.ref(`users/${tgUser.id}`);
-                await userRef.child('balance').set(firebase.database.ServerValue.increment(-amount));
+                await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(-amount));
                 userState.balance -= amount;
                 
                 const reqId = db.ref('withdrawals/pending').push().key;
@@ -1037,13 +1026,7 @@
                 userTransactions.unshift({ ...newRequest, timestamp: Date.now() });
                 
                 tg.HapticFeedback.notificationOccurred('success');
-                const successMessage = `
-                    <div class="popup-icon success"><i class="fas fa-check-circle"></i></div>
-                    <h2>অনুরোধ সফল হয়েছে!</h2>
-                    <p>আপনার ${amount.toFixed(2)} Coin উত্তোলনের অনুরোধটি সফলভাবে জমা দেওয়া হয়েছে। এডমিন রিভিউ করে কিছুক্ষণের মধ্যে আপনার পেমেন্ট সম্পন্ন করবেন।</p>
-                    <button class="popup-close-btn">ঠিক আছে</button>
-                `;
-                showPopup(successMessage);
+                showPopup(`<div class="popup-icon success"><i class="fas fa-check-circle"></i></div><h2>অনুরোধ সফল হয়েছে!</h2><p>আপনার ${amount.toFixed(2)} Coin উত্তোলনের অনুরোধটি সফলভাবে জমা দেওয়া হয়েছে।</p><button class="popup-close-btn">ঠিক আছে</button>`);
                 document.getElementById('withdraw-form').reset();
             } catch (error) {
                 await db.ref(`users/${tgUser.id}/balance`).set(firebase.database.ServerValue.increment(amount));
@@ -1051,10 +1034,8 @@
                 tg.HapticFeedback.notificationOccurred('error'); 
                 tg.showAlert("Failed to submit request. Your balance has been restored.");
             } finally {
-                renderUI();
-                renderWithdrawalHistory();
-                btn.disabled = false;
-                btn.textContent = 'Submit Request';
+                renderUI(); renderWithdrawalHistory();
+                btn.disabled = false; btn.textContent = 'Submit Request';
             }
         };
 
@@ -1064,35 +1045,28 @@
             refLinkInput.setSelectionRange(0, 99999);
             try {
                 navigator.clipboard.writeText(refLinkInput.value).then(() => {
-                    tg.HapticFeedback.notificationOccurred('success');
-                    tg.showAlert("Referral link copied!");
+                    tg.HapticFeedback.notificationOccurred('success'); tg.showAlert("Referral link copied!");
                 });
             } catch (err) {
                 document.execCommand('copy');
-                tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("Referral link copied!");
+                tg.HapticFeedback.notificationOccurred('success'); tg.showAlert("Referral link copied!");
             }
         };
 
         const shareReferralLink = (inputId) => {
-            const refLinkInput = document.getElementById(inputId);
-            const link = refLinkInput.value;
+            const link = document.getElementById(inputId).value;
             tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('Join and earn with me!')}`);
         };
         
         const renderSuperTasksPage = () => {
-            const container = document.getElementById('super-tasks-container');
-            container.innerHTML = '';
+            const container = document.getElementById('super-tasks-container'); container.innerHTML = '';
             if (appConfig.superTasks) {
-                const tasks = [];
-                for(const key in appConfig.superTasks) { tasks.push({key, ...appConfig.superTasks[key]}); }
+                const tasks = Object.entries(appConfig.superTasks).map(([key, value]) => ({ key, ...value }));
                 tasks.reverse();
-
                 tasks.forEach(task => {
                     const userSubmissions = userSuperTaskSubmissions.filter(sub => sub.taskId === task.key);
                     const lastSubmission = userSubmissions.length > 0 ? userSubmissions[0] : null; 
                     const rejectionCount = userSubmissions.filter(sub => sub.status === 'rejected').length;
-
                     let buttonHtml = '';
                     if (lastSubmission && lastSubmission.status !== 'rejected') {
                         buttonHtml = `<button class="action-btn task-view-btn" disabled>${lastSubmission.status.charAt(0).toUpperCase() + lastSubmission.status.slice(1)}</button>`;
@@ -1102,13 +1076,9 @@
                         const btnText = rejectionCount > 0 ? 'Resubmit Task' : 'View Task';
                         buttonHtml = `<button class="action-btn task-view-btn" onclick="window.globalFuncs.showTaskDetail('${task.key}')">${btnText}</button>`;
                     }
-                    if(userSubmissions.length > 0) return;
-
-
-                    const el = document.createElement('div');
-                    el.className = 'super-task-card';
-                    el.innerHTML = `<img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>${buttonHtml}</div>`;
-                    container.appendChild(el);
+                    if(userSubmissions.some(sub => sub.status === 'completed' || sub.status === 'pending')) return;
+                    
+                    container.innerHTML += `<div class="super-task-card"><img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner"><div class="task-content"><h3>${task.title}</h3><p style="font-size: 0.9rem; color: var(--text-secondary-dark);">${task.description}</p><div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>${buttonHtml}</div></div>`;
                 });
             } else {
                 container.innerHTML = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No super tasks available right now.</p>';
@@ -1118,46 +1088,33 @@
         const showTaskDetail = (taskId) => {
             const task = appConfig.superTasks[taskId];
             const detailContainer = document.getElementById('super-task-detail-view');
-            
             const screenshotUploaderUrl = appConfig.screenshotUploadUrl || 'https://imgbb.com';
-
             detailContainer.innerHTML = `<button onclick="window.globalFuncs.showTaskList()" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Tasks</button>
             <div class="super-task-card" style="margin-bottom:0;">
                 <img src="${task.image || 'https://via.placeholder.com/400x120'}" class="task-banner" alt="Task Banner">
                 <div class="task-content">
-                    <h3>${task.title}</h3>
-                    <p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
+                    <h3>${task.title}</h3><p style="white-space: pre-wrap; color: var(--text-secondary-dark);">${task.description}</p>
                     <div class="task-meta"><span class="reward">Reward: ${task.reward} Coin</span><span class="limit">${task.completions || 0} / ${task.limit} Done</span></div>
                     <a href="#" onclick="window.Telegram.WebApp.openLink('${task.url}'); return false;" class="action-btn" style="width: 100%; text-align:center; display:block; margin: 20px 0;">Go To Task Link</a>
                     <form id="task-submission-form" onsubmit="window.globalFuncs.handleSuperTaskSubmit(event, '${taskId}')">
                         <h4 style="color:var(--primary-color); margin-top: 20px; margin-bottom: 10px;">Submit Proof</h4>
                         <div class="form-group"><label for="proof-text">Work Proof (optional):</label><textarea id="proof-text" class="form-control" placeholder="Write your proof details here..."></textarea></div>
                         <div class="form-group">
-                            <label>Screenshot Links:</label>
-                             <a href="#" onclick="window.Telegram.WebApp.openLink('${screenshotUploaderUrl}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-bottom: 10px; display:inline-block;">Create screenshot link here</a>
-                            <div id="screenshot-inputs-container">
-                                <input type="url" class="form-control" style="margin-bottom:10px;" placeholder="https://example.com/image.png" required>
-                            </div>
+                            <label>Screenshot Links:</label><a href="#" onclick="window.Telegram.WebApp.openLink('${screenshotUploaderUrl}'); return false;" style="font-size:0.8rem; color: var(--primary-color); margin-bottom: 10px; display:inline-block;">Create screenshot link here</a>
+                            <div id="screenshot-inputs-container"><input type="url" class="form-control" style="margin-bottom:10px;" placeholder="https://example.com/image.png" required></div>
                             <button type="button" class="action-btn" style="background: #444; color: white; padding: 8px 12px; font-size: 0.8rem;" onclick="window.globalFuncs.addScreenshotField()">+ Add Screenshot</button>
                         </div>
                         <button type="submit" class="action-btn" style="width:100%;">Submit Task</button>
                     </form>
                 </div>
             </div>`;
-            
             document.getElementById('super-task-list-view').style.display = 'none';
             detailContainer.style.display = 'block';
         };
 
         const addScreenshotField = () => {
             const container = document.getElementById('screenshot-inputs-container');
-            const newInput = document.createElement('input');
-            newInput.type = 'url';
-            newInput.className = 'form-control';
-            newInput.placeholder = 'https://example.com/another-image.png';
-            newInput.style.marginBottom = '10px';
-            newInput.required = true;
-            container.appendChild(newInput);
+            container.innerHTML += '<input type="url" class="form-control" placeholder="https://example.com/another-image.png" style="margin-bottom:10px;" required>';
         };
 
         const showTaskList = () => {
@@ -1171,26 +1128,21 @@
             btn.disabled = true; btn.textContent = 'Submitting...';
 
             const proofText = document.getElementById('proof-text').value;
-            const screenshotLinks = [];
-            document.querySelectorAll('#screenshot-inputs-container input').forEach(input => {
-                if (input.value) screenshotLinks.push(input.value);
-            });
+            const screenshotLinks = Array.from(document.querySelectorAll('#screenshot-inputs-container input')).map(input => input.value).filter(Boolean);
             if (screenshotLinks.length === 0) {
                 tg.showAlert('Please provide at least one screenshot link.');
-                btn.disabled = false; btn.textContent = 'Submit Task';
-                return;
+                btn.disabled = false; btn.textContent = 'Submit Task'; return;
             }
 
             const db = firebase.database();
-            const submissionData = { userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, taskId: taskId, proofText: proofText, screenshotLinks: screenshotLinks, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
+            const submissionData = { userId: tgUser.id, userName: `${userState.firstName} ${userState.lastName}`, taskId: taskId, proofText, screenshotLinks, status: 'pending', timestamp: firebase.database.ServerValue.TIMESTAMP };
 
             try {
                 await db.ref(`superTaskSubmissions/pending`).push(submissionData);
                 await loadSuperTaskHistory(db); 
                 tg.HapticFeedback.notificationOccurred('success');
-                showPopup(`<h2>Task Submitted!</h2><p>আপনার টাস্ক জমা দেওয়া হয়েছে। এডমিন রিভিউ করে আপনার রিওয়ার্ড যোগ করে দিবেন।</p><button class="popup-close-btn">OK</button>`);
-                showTaskList();
-                renderSuperTasksPage(); 
+                showPopup(`<h2>Task Submitted!</h2><p>আপনার টাস্ক জমা দেওয়া হয়েছে।</p><button class="popup-close-btn">OK</button>`);
+                showTaskList(); renderSuperTasksPage(); 
             } catch (error) {
                 console.error("Task submission failed: ", error);
                 tg.showAlert('Failed to submit task. Please try again.');
@@ -1201,99 +1153,44 @@
         const handleChannelJoin = (type) => {
             const welcomeConf = appConfig.welcomePopup || {};
             const channels = {
-                payment: { url: welcomeConf.paymentChannelUrl, btnId: 'payment-channel-btn', checkName: 'paymentChannelJoined', name: welcomeConf.paymentChannelName || 'Payment Channel'},
-                news: { url: welcomeConf.newsChannelUrl, btnId: 'news-channel-btn', checkName: 'newsChannelJoined', name: welcomeConf.newsChannelName || 'News Channel'}
+                payment: { url: welcomeConf.paymentChannelUrl, btnId: 'payment-channel-btn', checkName: 'paymentChannelJoined' },
+                news: { url: welcomeConf.newsChannelUrl, btnId: 'news-channel-btn', checkName: 'newsChannelJoined' }
             };
             const channel = channels[type];
-            if (!channel) return;
-
-            const btn = document.getElementById(channel.btnId);
-            const isJoined = localStorage.getItem(channel.checkName) === 'true';
-
-            if (isJoined) { tg.showAlert('You have already confirmed joining this channel.'); return; }
-
-            let clickState = JSON.parse(localStorage.getItem(`${channel.checkName}_state`) || '{}');
-
-            if (!clickState.clicked) {
-                tg.openLink(channel.url);
-                clickState.clicked = true;
-                localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
-                btn.textContent = 'Check Join';
-                tg.showAlert(`Please join the channel and then click "Check Join" to confirm.`);
-            } else {
-                clickState.attempts = (clickState.attempts || 0) + 1;
-                if (clickState.attempts < 2) {
-                    tg.showAlert(`It seems you haven't joined yet. Please join the channel and try again.`);
-                    localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
-                } else {
-                    localStorage.setItem(channel.checkName, 'true');
-                    btn.style.backgroundColor = 'var(--success)';
-                    btn.textContent = 'Joined!';
-                    btn.disabled = true;
-                    localStorage.removeItem(`${channel.checkName}_state`);
-                }
-            }
+            if (!channel || !channel.url) return;
+            tg.openLink(channel.url);
+            setTimeout(() => {
+                 const btn = document.getElementById(channel.btnId);
+                 localStorage.setItem(channel.checkName, 'true');
+                 btn.style.backgroundColor = 'var(--success)';
+                 btn.textContent = 'Joined!';
+                 btn.disabled = true;
+            }, 3000);
         };
         
         const handleGotItClick = () => {
             const welcomeConf = appConfig.welcomePopup || {};
-            const needsPaymentJoin = !!welcomeConf.paymentChannelUrl;
-            const needsNewsJoin = !!welcomeConf.newsChannelUrl;
-
-            const isPaymentJoined = localStorage.getItem('paymentChannelJoined') === 'true';
-            const isNewsJoined = localStorage.getItem('newsChannelJoined') === 'true';
-
-            if (needsPaymentJoin && !isPaymentJoined) { tg.showAlert('Please join the Payment Channel first and check it.'); return; }
-            if (needsNewsJoin && !isNewsJoined) { tg.showAlert('Please join the News Channel first and check it.'); return; }
-
-            const gotItUrl = welcomeConf.gotItButtonUrl;
-            if (gotItUrl) { tg.openLink(gotItUrl); }
-            
+            if (welcomeConf.paymentChannelUrl && !localStorage.getItem('paymentChannelJoined')) { tg.showAlert('Please join the Payment Channel first.'); return; }
+            if (welcomeConf.newsChannelUrl && !localStorage.getItem('newsChannelJoined')) { tg.showAlert('Please join the News Channel first.'); return; }
+            if (welcomeConf.gotItButtonUrl) { tg.openLink(welcomeConf.gotItButtonUrl); }
             closePopup();
         };
 
         const renderYoutubeTutorialsPage = (searchTerm = '') => {
             const container = document.getElementById('video-list-container');
             if (!container) return;
-
             const filteredVideos = youtubeVideos.filter(video => video.title.toLowerCase().includes(searchTerm));
-
             if (filteredVideos.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary-dark);">No videos found.</p>';
-                return;
+                container.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary-dark);">No videos found.</p>'; return;
             }
-
             container.innerHTML = filteredVideos.map(video => {
                 let videoId = '';
                 try {
                     const url = new URL(video.link);
-                    if (url.hostname === 'youtu.be') {
-                        videoId = url.pathname.slice(1);
-                    } else {
-                        videoId = url.searchParams.get('v');
-                    }
+                    videoId = (url.hostname === 'youtu.be') ? url.pathname.slice(1) : url.searchParams.get('v');
                 } catch (e) { console.error("Invalid video URL", video.link); }
                 
-                return `<div class="video-card">
-                    <div class="video-iframe-container">
-                        <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="video-details">
-                        <h4>${video.title}</h4>
-                        <p>${video.description}</p>
-                    </div>
-                    <div class="video-actions">
-                        <span class="action" onclick="window.globalFuncs.handleLikeClick(this)">
-                            <i class="far fa-thumbs-up"></i> <span class="like-count">${Math.floor(Math.random() * 500) + 50}</span>
-                        </span>
-                        <span class="action">
-                            <i class="far fa-comment"></i> ${Math.floor(Math.random() * 50) + 5}
-                        </span>
-                        <span class="action">
-                            <i class="fas fa-share"></i> ${Math.floor(Math.random() * 20) + 1}
-                        </span>
-                    </div>
-                </div>`;
+                return `<div class="video-card"><div class="video-iframe-container"><iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div><div class="video-details"><h4>${video.title}</h4><p>${video.description}</p></div><div class="video-actions"><span class="action" onclick="window.globalFuncs.handleLikeClick(this)"><i class="far fa-thumbs-up"></i> <span class="like-count">${Math.floor(Math.random()*500)+50}</span></span><span class="action"><i class="far fa-comment"></i> ${Math.floor(Math.random()*50)+5}</span><span class="action"><i class="fas fa-share"></i> ${Math.floor(Math.random()*20)+1}</span></div></div>`;
             }).join('');
         };
         
@@ -1301,94 +1198,119 @@
             const icon = element.querySelector('i');
             const countSpan = element.querySelector('.like-count');
             let count = parseInt(countSpan.textContent);
-
-            if (element.classList.contains('liked')) {
-                element.classList.remove('liked');
-                icon.classList.replace('fas', 'far');
-                countSpan.textContent = count - 1;
+            element.classList.toggle('liked');
+            if(element.classList.contains('liked')) {
+                icon.classList.replace('far', 'fas'); countSpan.textContent = count + 1;
             } else {
-                element.classList.add('liked');
-                icon.classList.replace('far', 'fas');
-                countSpan.textContent = count + 1;
+                icon.classList.replace('fas', 'far'); countSpan.textContent = count - 1;
             }
         };
 
-        const renderLeaderboard = async () => {
-            const container = document.getElementById('leaderboard-list');
+        const switchLeaderboardTab = (type) => {
+            document.getElementById('leaderboard-tab-alltime').classList.toggle('active', type === 'alltime');
+            document.getElementById('leaderboard-tab-today').classList.toggle('active', type === 'today');
+            document.getElementById('leaderboard-list-alltime').style.display = type === 'alltime' ? 'block' : 'none';
+            document.getElementById('leaderboard-list-today').style.display = type === 'today' ? 'block' : 'none';
+            renderLeaderboard(type);
+        };
+
+        const renderLeaderboard = async (type) => {
+            const containerId = `leaderboard-list-${type}`;
+            const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Loading Leaderboard...</p>';
+            
             try {
                 const db = firebase.database();
-                const usersRef = db.ref('users').orderByChild('referrals').limitToLast(50);
-                const snapshot = await usersRef.once('value');
-                
-                if (!snapshot.exists()) {
-                    container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">No users found for leaderboard.</p>';
-                    return;
+                if (type === 'alltime') {
+                    const usersSnap = await db.ref('users').orderByChild('referrals').limitToLast(50).once('value');
+                    if (!usersSnap.exists()) { container.innerHTML = '<p style="text-align:center; padding:20px;">Leaderboard is empty.</p>'; return; }
+                    let users = [];
+                    usersSnap.forEach(child => { if (child.val().referrals > 0) users.push(child.val()); });
+                    users.reverse();
+                    container.innerHTML = users.length === 0 ? '<p style="text-align:center; padding:20px;">Leaderboard is empty.</p>' : users.map((user, index) => leaderboardItemHtml(user, index, 'alltime')).join('');
+                } else if (type === 'today') {
+                    const today = new Date().toISOString().slice(0, 10);
+                    const dailyRefSnap = await db.ref(`dailyReferrals/${today}`).orderByChild('count').limitToLast(50).once('value');
+                    if (!dailyRefSnap.exists()) { container.innerHTML = '<p style="text-align:center; padding:20px;">No referrals today yet.</p>'; return; }
+                    let dailyReferrals = [];
+                    dailyRefSnap.forEach(child => dailyReferrals.push({ userId: child.key, ...child.val() }));
+                    dailyReferrals.reverse();
+
+                    const userPromises = dailyReferrals.map(ref => db.ref(`users/${ref.userId}`).once('value'));
+                    const userSnaps = await Promise.all(userPromises);
+                    const usersWithDailyData = userSnaps.map((snap, i) => ({ ...snap.val(), dailyData: dailyReferrals[i] }));
+
+                    container.innerHTML = usersWithDailyData.map((user, index) => leaderboardItemHtml(user, index, 'today')).join('');
                 }
-
-                let users = [];
-                snapshot.forEach(child => {
-                    const user = child.val();
-                    if(user.referrals > 0){
-                        users.push(user);
-                    }
-                });
-                users.reverse();
-
-                if (users.length === 0) {
-                     container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Leaderboard is empty right now.</p>';
-                     return;
-                }
-
-                container.innerHTML = users.map((user, index) => `
-                    <div class="leader-item">
-                        <span class="rank">#${index + 1}</span>
-                        <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="pfp" class="leader-pfp">
-                        <div class="leader-info">
-                            <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
-                            <p>@${user.username || 'N/A'}</p>
-                        </div>
-                        <span class="leader-referrals">${user.referrals || 0}</span>
-                    </div>
-                `).join('');
-
             } catch (error) {
                 console.error("Failed to load leaderboard:", error);
-                container.innerHTML = '<p style="text-align:center; padding:20px; color: var(--text-secondary-dark);">Could not load leaderboard.</p>';
+                container.innerHTML = '<p style="text-align:center; padding:20px;">Could not load leaderboard.</p>';
             }
         };
 
+        const leaderboardItemHtml = (user, index, type) => {
+            const referrals = type === 'today' ? user.dailyData.count : (user.referrals || 0);
+            const income = type === 'today' ? user.dailyData.income : (user.referralIncome || 0);
+
+            return `<div class="leader-item">
+                <span class="rank">#${index + 1}</span>
+                <img src="${user.photoUrl || 'https://via.placeholder.com/80'}" alt="pfp" class="leader-pfp">
+                <div class="leader-info">
+                    <h4>${user.firstName || ''} ${user.lastName || ''}</h4>
+                    <p>@${user.username || 'N/A'}</p>
+                </div>
+                <div class="leader-stats">
+                    <div class="referrals">${referrals} Referrals</div>
+                    <div class="income">${income.toFixed(2)} Coin</div>
+                </div>
+            </div>`;
+        };
+
+        const renderDeveloperPage = () => {
+            const devConf = appConfig.devInfo || {};
+            const companyConf = appConfig.companyInfo || {};
+            const devProfileContainer = document.getElementById('developer-profile-section');
+            const companyAboutContainer = document.getElementById('company-about-section');
+
+            devProfileContainer.innerHTML = `
+                <div class="dev-profile-card">
+                    <img src="${devConf.pfp || 'https://via.placeholder.com/100'}" alt="Developer">
+                    <div class="name-container">
+                        <h2 class="name">${devConf.name || 'Developer Name'}</h2>
+                        <i class="fas fa-check-circle verified-badge"></i>
+                    </div>
+                    <p class="bio">${devConf.bio || 'Developer bio not available.'}</p>
+                </div>`;
+
+            companyAboutContainer.innerHTML = `
+                <div class="company-about-card">
+                    <h3>About Us</h3>
+                    <div class="about-content">${companyConf.aboutHtml || '<p>Company information not available.</p>'}</div>
+                </div>`;
+        };
+        
         window.globalFuncs = { navigateToPage, showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField, handleLikeClick };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';
             if (appConfig.tasks) {
-                const tasks = [];
-                for(const key in appConfig.tasks) { tasks.push({key, ...appConfig.tasks[key]}); }
-                tasks.reverse();
-                tasks.forEach(task => {
-                    const isCompleted = userState.completedTasks && userState.completedTasks[task.key];
-                    const el = document.createElement('div'); el.className = 'task-container';
-                    el.innerHTML = `<img class="task-icon-img" src="${task.icon}" alt="icon"><div class="task-info"><h3>${task.name}</h3><p>Get ${task.reward} bonus Coin.</p></div><button class="action-btn" data-task-id="${task.key}" data-task-url="${task.url}" ${isCompleted ? 'disabled' : ''}>${isCompleted ? 'Claimed' : 'Claim Bonus'}</button>`;
-                    container.appendChild(el);
+                Object.entries(appConfig.tasks).reverse().forEach(([key, task]) => {
+                    const isCompleted = userState.completedTasks && userState.completedTasks[key];
+                    container.innerHTML += `<div class="task-container"><img class="task-icon-img" src="${task.icon}" alt="icon"><div class="task-info"><h3>${task.name}</h3><p>Get ${task.reward} bonus Coin.</p></div><button class="action-btn" data-task-id="${key}" data-task-url="${task.url}" ${isCompleted ? 'disabled' : ''}>${isCompleted ? 'Claimed' : 'Claim Bonus'}</button></div>`;
                 });
             }
         };
 
         const renderWithdrawSection = () => {
-            const container = document.getElementById('withdraw-section'); let optionsHtml = '';
-            if (appConfig.withdrawMethods) { appConfig.withdrawMethods.forEach(method => { optionsHtml += `<option value="${method.name}">${method.name} (Min: ${method.min} Coin)</option>`; }); }
+            const container = document.getElementById('withdraw-section');
+            let optionsHtml = appConfig.withdrawMethods ? appConfig.withdrawMethods.map(m => `<option value="${m.name}">${m.name} (Min: ${m.min} Coin)</option>`).join('') : '';
             
             let notices = '';
             const minRefs = appConfig.minimumWithdrawReferrals || 0;
-            if (minRefs > 0) {
-                notices += `<p>You need at least <b>${minRefs} referrals</b> to withdraw.</p>`;
-            }
-            const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
-            const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
-            if (superTaskCheckEnabled && minTasksRequired > 0) {
-                notices += `<p>You must complete at least <b>${minTasksRequired} Super Tasks</b> to withdraw.</p>`;
+            if (minRefs > 0) notices += `<p>You need at least <b>${minRefs} referrals</b> to withdraw.</p>`;
+            if (appConfig.superTaskWithdrawalRequired === true && (appConfig.minimumSuperTasks || 0) > 0) {
+                 notices += `<p>You must complete at least <b>${appConfig.minimumSuperTasks} Super Tasks</b> to withdraw.</p>`;
             }
             const noticeContainer = notices ? `<div style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8; display: flex; flex-direction: column; gap: 5px;">${notices}</div>` : '';
 
@@ -1398,13 +1320,8 @@
         const renderDynamicLinks = () => {
             const container = document.getElementById('dynamic-links-container'); container.innerHTML = '';
             if (appConfig.links) {
-                const links = [];
-                for (const key in appConfig.links) { links.push({key, ...appConfig.links[key]}); }
-                links.reverse();
-                links.forEach(link => {
-                    const el = document.createElement('div'); el.className = 'task-container';
-                    el.innerHTML = `<img class="task-icon-img" src="${link.icon}" alt="icon"><div class="task-info"><h3>${link.name}</h3></div><button class="action-btn" onclick="window.Telegram.WebApp.openLink('${link.url}')">Visit</button>`;
-                    container.appendChild(el);
+                Object.values(appConfig.links).reverse().forEach(link => {
+                    container.innerHTML += `<div class="task-container"><img class="task-icon-img" src="${link.icon}" alt="icon"><div class="task-info"><h3>${link.name}</h3></div><button class="action-btn" onclick="window.Telegram.WebApp.openLink('${link.url}')">Visit</button></div>`;
                 });
             }
         };

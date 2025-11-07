@@ -206,6 +206,13 @@
         }
         #theme-toggle-btn { right: 15px; }
         #developer-btn { right: 65px; }
+        #notification-btn { right: 115px; position: relative; } /* New Notification Button */
+        #notification-count { /* New Notification Badge */
+            position: absolute; top: -5px; right: -5px; background-color: var(--danger);
+            color: white; border-radius: 50%; width: 20px; height: 20px;
+            font-size: 0.75rem; font-weight: 700; display: none; /* Hidden by default */
+            align-items: center; justify-content: center;
+        }
 
         body.light-mode {
             --background-dark: #f0f2f5; --surface-dark: #ffffff;
@@ -239,6 +246,7 @@
 
     <div id="app" style="display: none;">
         <header class="profile-header">
+            <button id="notification-btn" class="header-icon-btn"><i class="fas fa-bell"></i><span id="notification-count">0</span></button>
             <button id="developer-btn" class="header-icon-btn"><i class="fas fa-code"></i></button>
             <button id="theme-toggle-btn" class="header-icon-btn"><i class="fas fa-sun"></i></button>
             <img id="user-photo" src="https://via.placeholder.com/80" alt="User">
@@ -394,6 +402,7 @@
         let userSuperTaskSubmissions = [];
         let adminTransactions = [];
         let youtubeVideos = [];
+        let broadcastMessages = []; // New: For notifications
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -450,82 +459,98 @@
             document.body.appendChild(script);
         };
 
+        // Main App Initialization
         const initApp = async () => {
             loadInitialTheme();
             tg.ready(); tg.expand();
             tgUser = tg.initDataUnsafe.user;
-            if (!tgUser || !tgUser.id) { tg.showAlert("User data not found.", () => tg.close()); return; }
-
+            if (!tgUser || !tgUser.id) { 
+                tg.showAlert("ব্যবহারকারীর ডেটা পাওয়া যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।", () => tg.close()); 
+                return; 
+            }
+            
             try {
-                updateProgress(10); firebase.initializeApp(firebaseConfig); const db = firebase.database();
+                updateProgress(10); 
+                firebase.initializeApp(firebaseConfig); 
+                const db = firebase.database();
                 updateProgress(20);
                 
                 const configSnapshot = await db.ref('config').once('value');
                 appConfig = configSnapshot.val() || {};
                 updateProgress(40);
-
-                await loadUserData(db);
-                updateProgress(60);
-
-                const historyPromise = loadTransactionHistory(db);
-                const superTaskHistoryPromise = loadSuperTaskHistory(db);
-                const adminHistoryPromise = loadAdminTransactionHistory(db);
-                const youtubeVideosPromise = loadYoutubeVideos(db);
-                const leaderboardPromise = renderLeaderboard('all-time');
-
-                await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise]);
-                updateProgress(80);
-
-                loadAdSdk(appConfig.adZoneId);
-                earningWalletBalance = parseFloat(localStorage.getItem(`earningWallet_${tgUser.id}`) || '0');
                 
-                renderUI(); setupNavigation(); setupEventListeners();
-                updateProgress(100);
-
-                setTimeout(() => {
+                // New mandatory join check
+                const channelsJoined = localStorage.getItem(`channelsJoined_${tgUser.id}`) === 'true';
+                if (!channelsJoined) {
                     document.getElementById('app-loader').style.display = 'none';
-                    document.getElementById('app').style.display = 'block';
-                    
-                    if (appConfig.welcomePopup) {
-                        showWelcomePopup();
-                    }
-                }, 300);
-            } catch (error) { console.error("Initialization failed:", error); tg.showAlert("Failed to load app data. Please try again."); }
+                    showWelcomePopup(true); // Show mandatory popup
+                } else {
+                    await continueInitApp(db);
+                }
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                tg.showAlert("অ্যাপ ডেটা লোড করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+            }
+        };
+        
+        // Function to continue initialization after mandatory checks
+        const continueInitApp = async (db) => {
+            if (!db) db = firebase.database();
+            document.getElementById('app-loader').style.display = 'flex'; // Show loader again
+            
+            await loadUserData(db);
+            updateProgress(60);
+
+            const historyPromise = loadTransactionHistory(db);
+            const superTaskHistoryPromise = loadSuperTaskHistory(db);
+            const adminHistoryPromise = loadAdminTransactionHistory(db);
+            const youtubeVideosPromise = loadYoutubeVideos(db);
+            const leaderboardPromise = renderLeaderboard('all-time');
+            const notificationsPromise = loadNotifications(db); // Load notifications
+
+            await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise, notificationsPromise]);
+            updateProgress(80);
+
+            loadAdSdk(appConfig.adZoneId);
+            earningWalletBalance = parseFloat(localStorage.getItem(`earningWallet_${tgUser.id}`) || '0');
+            
+            renderUI(); 
+            setupNavigation(); 
+            setupEventListeners();
+            updateProgress(100);
+
+            setTimeout(() => {
+                document.getElementById('app-loader').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+            }, 300);
         };
 
-        const showWelcomePopup = () => {
-            const welcomeConf = appConfig.welcomePopup || {};
-            const welcomeTitle = welcomeConf.title || 'Welcome!';
-            const welcomeMessageHtml = welcomeConf.messageHtml || '<p>Welcome to our app!</p>';
-            const paymentChannelName = welcomeConf.paymentChannelName || 'Join Payment Channel';
-            const paymentChannelUrl = welcomeConf.paymentChannelUrl;
-            const newsChannelName = welcomeConf.newsChannelName || 'Join News Channel';
-            const newsChannelUrl = welcomeConf.newsChannelUrl;
-            const premiumButtonName = welcomeConf.premiumButtonName || 'Join Premium';
-            const premiumButtonUrl = appConfig.premiumAccountUrl; 
-            const gotItButtonName = welcomeConf.gotItButtonName || 'Go To Home';
-            const gotItButtonUrl = welcomeConf.gotItButtonUrl;
 
+        const showWelcomePopup = (isMandatory = false) => {
+            const welcomeConf = appConfig.welcomePopup || {};
+            const welcomeTitle = welcomeConf.title || 'স্বাগতম!';
+            const welcomeMessage = welcomeConf.messageHtml || '<p>আমাদের অ্যাপে আপনাকে স্বাগতম! চালিয়ে যাওয়ার জন্য, অনুগ্রহ করে আমাদের চ্যানেলগুলিতে যোগ দিন।</p>';
+            const paymentChannelName = welcomeConf.paymentChannelName || 'পেমেন্ট চ্যানেল';
+            const paymentChannelUrl = welcomeConf.paymentChannelUrl;
+            const newsChannelName = welcomeConf.newsChannelName || 'নিউজ চ্যানেল';
+            const newsChannelUrl = welcomeConf.newsChannelUrl;
+            const gotItButtonName = welcomeConf.gotItButtonName || (isMandatory ? 'প্রবেশ করুন' : 'হোমে যান');
+            
             let channelButtonsHtml = '';
             if (paymentChannelUrl) {
                 const isJoined = localStorage.getItem('paymentChannelJoined') === 'true';
-                channelButtonsHtml += `<button id="payment-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('payment')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'Joined!' : paymentChannelName}</button>`;
+                channelButtonsHtml += `<button id="payment-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('payment')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'যোগদান করেছেন!' : `যোগ দিন: ${paymentChannelName}`}</button>`;
             }
             if (newsChannelUrl) {
                 const isJoined = localStorage.getItem('newsChannelJoined') === 'true';
-                channelButtonsHtml += `<button id="news-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('news')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'Joined!' : newsChannelName}</button>`;
+                channelButtonsHtml += `<button id="news-channel-btn" class="popup-close-btn" style="width:100%; margin-bottom:10px; background-color: ${isJoined ? 'var(--success)' : ''}" onclick="window.globalFuncs.handleChannelJoin('news')" ${isJoined ? 'disabled' : ''}>${isJoined ? 'যোগদান করেছেন!' : `যোগ দিন: ${newsChannelName}`}</button>`;
             }
 
-            let mainButtonsHtml = `<div style="display: flex; gap: 10px; margin-top: 25px;">`;
-            if (premiumButtonUrl) {
-                mainButtonsHtml += `<button class="popup-close-btn" style="flex: 1;" onclick="window.Telegram.WebApp.openLink('${premiumButtonUrl}');">${premiumButtonName}</button>`;
-            }
-            mainButtonsHtml += `<button id="got-it-btn" class="popup-close-btn" style="flex: 1; background: #555;" onclick="window.globalFuncs.handleGotItClick()">${gotItButtonName}</button>`;
-            mainButtonsHtml += `</div>`;
+            const mainButtonHtml = `<button id="got-it-btn" class="popup-close-btn" style="width:100%; margin-top: 15px; background: #555;" onclick="window.globalFuncs.handleGotItClick(${isMandatory})">${gotItButtonName}</button>`;
             
-            const popupContent = `<h2>${welcomeTitle}</h2><div style="text-align: left; max-height: 200px; overflow-y: auto;">${welcomeMessageHtml}</div><div style="margin-top: 20px;">${channelButtonsHtml}</div>${mainButtonsHtml}`;
+            const popupContent = `<h2>${welcomeTitle}</h2><div style="text-align: left; max-height: 200px; overflow-y: auto;">${welcomeMessage}</div><div style="margin-top: 20px;">${channelButtonsHtml}</div>${mainButtonHtml}`;
 
-            showPopup(popupContent, false);
+            showPopup(popupContent, !isMandatory);
         };
         
         const loadUserData = async (db) => {
@@ -535,30 +560,42 @@
             
             if (!userData) {
                 const startParam = tg.initDataUnsafe.start_param;
-                const referralId = (startParam && !isNaN(startParam)) ? startParam : null;
+                const referralId = (startParam && !isNaN(startParam) && startParam != tgUser.id) ? startParam : null;
                 
-                userData = { id: tgUser.id, firstName: tgUser.first_name || '', lastName: tgUser.last_name || '', username: tgUser.username || '', photoUrl: tgUser.photo_url || '', balance: 0, referrals: 0, referredBy: referralId, totalEarned: 0, lifetimeAdCount: 0, lastAdWatchDate: '1970-01-01', dailyAdCount: 0, breakUntil: 0, completedTasks: {}, welcomed: false, isPremium: false, isVerified: false, createdAt: firebase.database.ServerValue.TIMESTAMP };
+                userData = { 
+                    id: tgUser.id, 
+                    firstName: tgUser.first_name || '', 
+                    lastName: tgUser.last_name || '', 
+                    username: tgUser.username || '', 
+                    photoUrl: tgUser.photo_url || '', 
+                    balance: 0, 
+                    referrals: 0, 
+                    referredBy: referralId, 
+                    totalEarned: 0, 
+                    lifetimeAdCount: 0, 
+                    lastAdWatchDate: '1970-01-01', 
+                    dailyAdCount: 0, 
+                    breakUntil: 0, 
+                    completedTasks: {}, 
+                    isPremium: false, 
+                    isVerified: false, 
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    tasksCompletedForReferral: 0, // New field
+                    referralBonusGiven: false     // New field
+                };
                 await userRef.set(userData);
                 
-                if (referralId && referralId != tgUser.id) {
+                if (referralId) {
+                    // Just increment the referrer count. Bonus is handled separately.
                     const referrerRef = db.ref(`users/${referralId}`);
-                    const bonusAmount = parseFloat(appConfig.referralBonus || 0);
-                    
-                    await referrerRef.transaction(currentData => {
-                        if (currentData) {
-                            if (bonusAmount > 0) {
-                                currentData.balance = (currentData.balance || 0) + bonusAmount;
-                            }
-                            currentData.referrals = (currentData.referrals || 0) + 1;
-                        }
-                        return currentData;
-                    });
+                    await referrerRef.child('referrals').set(firebase.database.ServerValue.increment(1));
                 }
             }
             
             const today = new Date().toISOString().slice(0, 10);
             if (userData.lastAdWatchDate !== today) {
-                userData.dailyAdCount = 0; userData.lastAdWatchDate = today;
+                userData.dailyAdCount = 0; 
+                userData.lastAdWatchDate = today;
                 await userRef.update({ dailyAdCount: 0, lastAdWatchDate: today });
             }
             userState = userData;
@@ -595,6 +632,18 @@
             }
             adminTransactions.reverse();
         };
+        
+        // New: Load Notifications
+        const loadNotifications = async (db) => {
+            broadcastMessages = [];
+            const snap = await db.ref('broadcastMessages').orderByChild('timestamp').limitToLast(20).once('value');
+            if(snap.exists()) {
+                snap.forEach(child => {
+                    broadcastMessages.push({ key: child.key, ...child.val() });
+                });
+                broadcastMessages.reverse(); // Newest first
+            }
+        };
 
         const loadYoutubeVideos = async (db) => {
             youtubeVideos = [];
@@ -610,7 +659,7 @@
         const renderUI = () => {
             document.getElementById('user-photo').src = userState.photoUrl || 'https://via.placeholder.com/80';
             const userNameEl = document.getElementById('user-name');
-            const verifiedBadge = `<span class="verified-badge"><i class="fas fa-check-circle"></i></span>`;
+            const verifiedBadge = userState.isVerified ? `<span class="verified-badge"><i class="fas fa-check-circle"></i></span>` : '';
             userNameEl.innerHTML = `${userState.firstName} ${userState.lastName} ${verifiedBadge}`;
 
             document.getElementById('user-balance').textContent = (userState.balance || 0).toFixed(2);
@@ -625,6 +674,45 @@
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection();
+            renderNotifications(); // New: Render notifications
+        };
+        
+        // New: Render Notifications
+        const renderNotifications = () => {
+            const countEl = document.getElementById('notification-count');
+            const lastReadTimestamp = parseInt(localStorage.getItem(`lastReadTimestamp_${tgUser.id}`) || '0');
+            const unreadCount = broadcastMessages.filter(msg => msg.timestamp > lastReadTimestamp).length;
+
+            if (unreadCount > 0) {
+                countEl.textContent = unreadCount;
+                countEl.style.display = 'flex';
+            } else {
+                countEl.style.display = 'none';
+            }
+        };
+        
+        // New: Show Notification Popup
+        const showNotificationPopup = () => {
+            let messagesHtml = '<h2 style="text-align:left;">বিজ্ঞপ্তি</h2><div style="max-height: 300px; overflow-y: auto; text-align: left;">';
+            if (broadcastMessages.length > 0) {
+                messagesHtml += broadcastMessages.map(msg => `
+                    <div style="padding: 10px; border-bottom: 1px solid var(--border-dark);">
+                        <p style="white-space: pre-wrap; margin-bottom: 5px;">${msg.message}</p>
+                        <small style="color: var(--text-secondary-dark);">${new Date(msg.timestamp).toLocaleString()}</small>
+                    </div>
+                `).join('');
+            } else {
+                messagesHtml += '<p>কোনো নতুন বিজ্ঞপ্তি নেই।</p>';
+            }
+            messagesHtml += '</div><button class="popup-close-btn" style="margin-top: 20px;">বন্ধ করুন</button>';
+            
+            showPopup(messagesHtml);
+            
+            // Mark as read
+            if (broadcastMessages.length > 0) {
+                localStorage.setItem(`lastReadTimestamp_${tgUser.id}`, broadcastMessages[0].timestamp);
+                renderNotifications(); // Re-render to hide badge
+            }
         };
 
         const renderPremiumPage = () => {
@@ -701,7 +789,11 @@
                 referralsSnap.forEach(childSnap => {
                     const referredUser = childSnap.val();
                     count++;
-                    referralHtml += `<div class="referral-list-item"><img src="${referredUser.photoUrl || 'https://via.placeholder.com/80'}" alt="User"><div class="info"><p>${referredUser.firstName || ''} ${referredUser.lastName || ''}</p></div><span class="bonus">+${(appConfig.referralBonus || 0).toFixed(2)}</span></div>`;
+                    const tasksNeeded = appConfig.tasksForReferralBonus || 5;
+                    const bonusReceived = referredUser.referralBonusGiven === true;
+                    const bonusText = bonusReceived ? `+${(appConfig.referralBonus || 0).toFixed(2)}` : `${referredUser.tasksCompletedForReferral || 0}/${tasksNeeded} কাজ`;
+                    const bonusColor = bonusReceived ? 'var(--success)' : 'var(--pending)';
+                    referralHtml += `<div class="referral-list-item"><img src="${referredUser.photoUrl || 'https://via.placeholder.com/80'}" alt="User"><div class="info"><p>${referredUser.firstName || ''} ${referredUser.lastName || ''}</p></div><span class="bonus" style="color: ${bonusColor}; font-size: 0.9rem;">${bonusText}</span></div>`;
                 });
                 referralListContainer.innerHTML = referralHtml;
                 myReferralsCount.textContent = `Total: ${count}`;
@@ -765,9 +857,25 @@
                 }
                 await userRef.update(updates);
                 
-                const today = new Date().toISOString().slice(0, 10);
-                await db.ref(`userEarnings/${tgUser.id}/${today}`).set(firebase.database.ServerValue.increment(adValue));
+                // New: Check for referral bonus condition
+                if (userState.referredBy && !userState.referralBonusGiven) {
+                    const tasksNeeded = appConfig.tasksForReferralBonus || 5;
+                    const newCount = (userState.tasksCompletedForReferral || 0) + 1;
+                    
+                    await userRef.child('tasksCompletedForReferral').set(newCount);
+                    userState.tasksCompletedForReferral = newCount;
 
+                    if (newCount >= tasksNeeded) {
+                        const referrerRef = db.ref(`users/${userState.referredBy}`);
+                        const bonusAmount = parseFloat(appConfig.referralBonus || 0);
+                        if (bonusAmount > 0) {
+                             await referrerRef.child('balance').set(firebase.database.ServerValue.increment(bonusAmount));
+                        }
+                        await userRef.child('referralBonusGiven').set(true);
+                        userState.referralBonusGiven = true;
+                    }
+                }
+                
                 tg.HapticFeedback.notificationOccurred('success');
                 tg.showAlert(`+${adValue.toFixed(2)} Coin added to your Earning Wallet.`);
                 
@@ -910,6 +1018,7 @@
         const setupEventListeners = () => {
             themeToggleButton.addEventListener('click', toggleTheme);
             document.getElementById('developer-btn').addEventListener('click', () => navigateToPage('developer-page'));
+            document.getElementById('notification-btn').addEventListener('click', showNotificationPopup);
             
             popup.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
@@ -1185,41 +1294,35 @@
         const handleChannelJoin = (type) => {
             const welcomeConf = appConfig.welcomePopup || {};
             const channels = {
-                payment: { url: welcomeConf.paymentChannelUrl, btnId: 'payment-channel-btn', checkName: 'paymentChannelJoined', name: welcomeConf.paymentChannelName || 'Payment Channel'},
-                news: { url: welcomeConf.newsChannelUrl, btnId: 'news-channel-btn', checkName: 'newsChannelJoined', name: welcomeConf.newsChannelName || 'News Channel'}
+                payment: { url: welcomeConf.paymentChannelUrl, btnId: 'payment-channel-btn', checkName: 'paymentChannelJoined' },
+                news: { url: welcomeConf.newsChannelUrl, btnId: 'news-channel-btn', checkName: 'newsChannelJoined' }
             };
             const channel = channels[type];
-            if (!channel) return;
+            if (!channel || !channel.url) {
+                tg.showAlert('Channel URL not configured.');
+                return;
+            }
 
             const btn = document.getElementById(channel.btnId);
-            const isJoined = localStorage.getItem(channel.checkName) === 'true';
+            tg.openLink(channel.url);
 
-            if (isJoined) { tg.showAlert('You have already confirmed joining this channel.'); return; }
-
-            let clickState = JSON.parse(localStorage.getItem(`${channel.checkName}_state`) || '{}');
-
-            if (!clickState.clicked) {
-                tg.openLink(channel.url);
-                clickState.clicked = true;
-                localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
-                btn.textContent = 'Check Join';
-                tg.showAlert(`Please join the channel and then click "Check Join" to confirm.`);
-            } else {
-                clickState.attempts = (clickState.attempts || 0) + 1;
-                if (clickState.attempts < 2) {
-                    tg.showAlert(`It seems you haven't joined yet. Please join the channel and try again.`);
-                    localStorage.setItem(`${channel.checkName}_state`, JSON.stringify(clickState));
-                } else {
-                    localStorage.setItem(channel.checkName, 'true');
-                    btn.style.backgroundColor = 'var(--success)';
-                    btn.textContent = 'Joined!';
-                    btn.disabled = true;
-                    localStorage.removeItem(`${channel.checkName}_state`);
-                }
-            }
+            // Give user time to join, then enable a "check" state
+            btn.textContent = 'চেক করুন';
+            btn.onclick = () => {
+                // Here, we trust the user has joined. A true server-side check would require a bot.
+                localStorage.setItem(channel.checkName, 'true');
+                btn.style.backgroundColor = 'var(--success)';
+                btn.textContent = 'যোগদান করেছেন!';
+                btn.disabled = true;
+            };
         };
         
-        const handleGotItClick = () => {
+        const handleGotItClick = (isMandatory) => {
+             if (!isMandatory) {
+                closePopup();
+                return;
+            }
+
             const welcomeConf = appConfig.welcomePopup || {};
             const needsPaymentJoin = !!welcomeConf.paymentChannelUrl;
             const needsNewsJoin = !!welcomeConf.newsChannelUrl;
@@ -1227,13 +1330,19 @@
             const isPaymentJoined = localStorage.getItem('paymentChannelJoined') === 'true';
             const isNewsJoined = localStorage.getItem('newsChannelJoined') === 'true';
 
-            if (needsPaymentJoin && !isPaymentJoined) { tg.showAlert('Please join the Payment Channel first and check it.'); return; }
-            if (needsNewsJoin && !isNewsJoined) { tg.showAlert('Please join the News Channel first and check it.'); return; }
-
-            const gotItUrl = welcomeConf.gotItButtonUrl;
-            if (gotItUrl) { tg.openLink(gotItUrl); }
+            if (needsPaymentJoin && !isPaymentJoined) {
+                tg.showAlert('অনুগ্রহ করে প্রথমে পেমেন্ট চ্যানেলে যোগ দিন এবং চেক করুন।');
+                return;
+            }
+            if (needsNewsJoin && !isNewsJoined) {
+                tg.showAlert('অনুগ্রহ করে প্রথমে নিউজ চ্যানেলে যোগ দিন এবং চেক করুন।');
+                return;
+            }
             
+            // If all checks pass
+            localStorage.setItem(`channelsJoined_${tgUser.id}`, 'true');
             closePopup();
+            continueInitApp(); // Proceed to load the main app
         };
 
         const renderYoutubeTutorialsPage = (searchTerm = '') => {
@@ -1266,37 +1375,10 @@
                         <h4>${video.title}</h4>
                         <p>${video.description}</p>
                     </div>
-                    <div class="video-actions">
-                        <span class="action" onclick="window.globalFuncs.handleLikeClick(this)">
-                            <i class="far fa-thumbs-up"></i> <span class="like-count">${Math.floor(Math.random() * 500) + 50}</span>
-                        </span>
-                        <span class="action">
-                            <i class="far fa-comment"></i> ${Math.floor(Math.random() * 50) + 5}
-                        </span>
-                        <span class="action">
-                            <i class="fas fa-share"></i> ${Math.floor(Math.random() * 20) + 1}
-                        </span>
-                    </div>
                 </div>`;
             }).join('');
         };
         
-        const handleLikeClick = (element) => {
-            const icon = element.querySelector('i');
-            const countSpan = element.querySelector('.like-count');
-            let count = parseInt(countSpan.textContent);
-
-            if (element.classList.contains('liked')) {
-                element.classList.remove('liked');
-                icon.classList.replace('fas', 'far');
-                countSpan.textContent = count - 1;
-            } else {
-                element.classList.add('liked');
-                icon.classList.replace('far', 'fas');
-                countSpan.textContent = count + 1;
-            }
-        };
-
         const renderLeaderboard = async (boardType = 'all-time') => {
             const container = document.getElementById('leaderboard-list');
             if (!container) return;
@@ -1397,7 +1479,7 @@
             }
         };
 
-        window.globalFuncs = { navigateToPage, showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField, handleLikeClick };
+        window.globalFuncs = { navigateToPage, showTaskDetail, showTaskList, handleSuperTaskSubmit, handleChannelJoin, handleGotItClick, addScreenshotField };
         
         const renderDynamicTasks = () => {
             const container = document.getElementById('dynamic-tasks-container'); container.innerHTML = '';
@@ -1421,12 +1503,12 @@
             let notices = '';
             const minRefs = appConfig.minimumWithdrawReferrals || 0;
             if (minRefs > 0) {
-                notices += `<p>You need at least <b>${minRefs} referrals</b> to withdraw.</p>`;
+                notices += `<p>আপনাকে উত্তোলন করার জন্য কমপক্ষে <b>${minRefs} রেফারেল</b> প্রয়োজন।</p>`;
             }
             const superTaskCheckEnabled = appConfig.superTaskWithdrawalRequired === true;
             const minTasksRequired = parseInt(appConfig.minimumSuperTasks || 0);
             if (superTaskCheckEnabled && minTasksRequired > 0) {
-                notices += `<p>You must complete at least <b>${minTasksRequired} Super Tasks</b> to withdraw.</p>`;
+                notices += `<p>আপনাকে উত্তোলন করার জন্য কমপক্ষে <b>${minTasksRequired} সুপার টাস্ক</b> সম্পন্ন করতে হবে।</p>`;
             }
             const noticeContainer = notices ? `<div style="font-size: 0.85rem; text-align: center; margin-bottom: 15px; opacity: 0.8; display: flex; flex-direction: column; gap: 5px;">${notices}</div>` : '';
 

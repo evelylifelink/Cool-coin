@@ -25,8 +25,13 @@
             color: var(--text-primary-dark); 
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
+            background-image: var(--background-wallpaper-url);
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
-        #app { max-width: 500px; margin: 0 auto; padding-bottom: 80px; background-color: var(--background-dark); }
+        #app { max-width: 500px; margin: 0 auto; padding-bottom: 80px; background-color: transparent; }
         .page { display: none; padding: 15px; }
         .page.active { display: block; animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -206,11 +211,11 @@
         }
         #theme-toggle-btn { right: 15px; }
         #developer-btn { right: 65px; }
-        #notification-btn { right: 115px; position: relative; } /* New Notification Button */
-        #notification-count { /* New Notification Badge */
+        #notification-btn { right: 115px; position: relative; }
+        #notification-count {
             position: absolute; top: -5px; right: -5px; background-color: var(--danger);
             color: white; border-radius: 50%; width: 20px; height: 20px;
-            font-size: 0.75rem; font-weight: 700; display: none; /* Hidden by default */
+            font-size: 0.75rem; font-weight: 700; display: none;
             align-items: center; justify-content: center;
         }
 
@@ -368,6 +373,14 @@
             <div id="developer-page" class="page" style="padding: 0;">
                 <!-- Content will be populated by JS -->
             </div>
+
+            <div id="notifications-page" class="page">
+                <div style="padding: 15px;">
+                    <button onclick="window.globalFuncs.navigateToPage('home-page')" style="background:none; border:none; color: var(--primary-color); font-size: 1rem; margin-bottom: 15px;"><i class="fas fa-arrow-left"></i> Back to Home</button>
+                    <h2 class="page-heading">Notifications</h2>
+                    <div id="notifications-list-container"></div>
+                </div>
+            </div>
         </main>
 
         <nav class="bottom-nav">
@@ -402,7 +415,7 @@
         let userSuperTaskSubmissions = [];
         let adminTransactions = [];
         let youtubeVideos = [];
-        let broadcastMessages = []; // New: For notifications
+        let broadcastMessages = [];
 
         const popup = document.getElementById('popup');
         const popupBody = document.getElementById('popup-body');
@@ -477,13 +490,16 @@
                 
                 const configSnapshot = await db.ref('config').once('value');
                 appConfig = configSnapshot.val() || {};
+
+                if (appConfig.wallpaperUrl) {
+                    document.body.style.setProperty('--background-wallpaper-url', `url('${appConfig.wallpaperUrl}')`);
+                }
                 updateProgress(40);
                 
-                // New mandatory join check
                 const channelsJoined = localStorage.getItem(`channelsJoined_${tgUser.id}`) === 'true';
                 if (!channelsJoined) {
                     document.getElementById('app-loader').style.display = 'none';
-                    showWelcomePopup(true); // Show mandatory popup
+                    showWelcomePopup(true);
                 } else {
                     await continueInitApp(db);
                 }
@@ -493,10 +509,9 @@
             }
         };
         
-        // Function to continue initialization after mandatory checks
         const continueInitApp = async (db) => {
             if (!db) db = firebase.database();
-            document.getElementById('app-loader').style.display = 'flex'; // Show loader again
+            document.getElementById('app-loader').style.display = 'flex';
             
             await loadUserData(db);
             updateProgress(60);
@@ -506,7 +521,7 @@
             const adminHistoryPromise = loadAdminTransactionHistory(db);
             const youtubeVideosPromise = loadYoutubeVideos(db);
             const leaderboardPromise = renderLeaderboard('all-time');
-            const notificationsPromise = loadNotifications(db); // Load notifications
+            const notificationsPromise = loadNotifications(db);
 
             await Promise.all([historyPromise, superTaskHistoryPromise, adminHistoryPromise, youtubeVideosPromise, leaderboardPromise, notificationsPromise]);
             updateProgress(80);
@@ -580,13 +595,12 @@
                     isPremium: false, 
                     isVerified: false, 
                     createdAt: firebase.database.ServerValue.TIMESTAMP,
-                    tasksCompletedForReferral: 0, // New field
-                    referralBonusGiven: false     // New field
+                    tasksCompletedForReferral: 0,
+                    referralBonusGiven: false
                 };
                 await userRef.set(userData);
                 
                 if (referralId) {
-                    // Just increment the referrer count. Bonus is handled separately.
                     const referrerRef = db.ref(`users/${referralId}`);
                     await referrerRef.child('referrals').set(firebase.database.ServerValue.increment(1));
                 }
@@ -633,15 +647,14 @@
             adminTransactions.reverse();
         };
         
-        // New: Load Notifications
         const loadNotifications = async (db) => {
             broadcastMessages = [];
-            const snap = await db.ref('broadcastMessages').orderByChild('timestamp').limitToLast(20).once('value');
+            const snap = await db.ref('broadcastMessages').orderByChild('timestamp').limitToLast(50).once('value');
             if(snap.exists()) {
                 snap.forEach(child => {
                     broadcastMessages.push({ key: child.key, ...child.val() });
                 });
-                broadcastMessages.reverse(); // Newest first
+                broadcastMessages.reverse();
             }
         };
 
@@ -674,10 +687,9 @@
             document.getElementById('move-to-balance-btn').disabled = earningWalletBalance < 100;
             renderAdTask(); renderAdProgress(); renderDynamicTasks(); renderWithdrawSection(); renderDynamicLinks();
             renderHomeReferralSection();
-            renderNotifications(); // New: Render notifications
+            renderNotifications();
         };
         
-        // New: Render Notifications
         const renderNotifications = () => {
             const countEl = document.getElementById('notification-count');
             const lastReadTimestamp = parseInt(localStorage.getItem(`lastReadTimestamp_${tgUser.id}`) || '0');
@@ -691,27 +703,26 @@
             }
         };
         
-        // New: Show Notification Popup
-        const showNotificationPopup = () => {
-            let messagesHtml = '<h2 style="text-align:left;">বিজ্ঞপ্তি</h2><div style="max-height: 300px; overflow-y: auto; text-align: left;">';
+        const renderNotificationsPage = () => {
+            const container = document.getElementById('notifications-list-container');
+            if(!container) return;
+
+            let messagesHtml = '';
             if (broadcastMessages.length > 0) {
-                messagesHtml += broadcastMessages.map(msg => `
-                    <div style="padding: 10px; border-bottom: 1px solid var(--border-dark);">
-                        <p style="white-space: pre-wrap; margin-bottom: 5px;">${msg.message}</p>
-                        <small style="color: var(--text-secondary-dark);">${new Date(msg.timestamp).toLocaleString()}</small>
+                messagesHtml = broadcastMessages.map(msg => `
+                    <div style="padding: 15px; border-bottom: 1px solid var(--border-dark); background: var(--surface-dark); border-radius: 12px; margin-bottom: 10px;">
+                        <p style="white-space: pre-wrap; margin-bottom: 8px; font-size: 0.95rem;">${msg.message}</p>
+                        <small style="color: var(--text-secondary-dark); font-size: 0.8rem;">${new Date(msg.timestamp).toLocaleString()}</small>
                     </div>
                 `).join('');
             } else {
-                messagesHtml += '<p>কোনো নতুন বিজ্ঞপ্তি নেই।</p>';
+                messagesHtml = '<p style="text-align:center; padding: 20px 0; color: var(--text-secondary-dark);">No new notifications.</p>';
             }
-            messagesHtml += '</div><button class="popup-close-btn" style="margin-top: 20px;">বন্ধ করুন</button>';
-            
-            showPopup(messagesHtml);
-            
-            // Mark as read
+            container.innerHTML = messagesHtml;
+
             if (broadcastMessages.length > 0) {
                 localStorage.setItem(`lastReadTimestamp_${tgUser.id}`, broadcastMessages[0].timestamp);
-                renderNotifications(); // Re-render to hide badge
+                renderNotifications();
             }
         };
 
@@ -857,7 +868,6 @@
                 }
                 await userRef.update(updates);
                 
-                // New: Check for referral bonus condition
                 if (userState.referredBy && !userState.referralBonusGiven) {
                     const tasksNeeded = appConfig.tasksForReferralBonus || 5;
                     const newCount = (userState.tasksCompletedForReferral || 0) + 1;
@@ -992,7 +1002,7 @@
             });
 
             const profileHeader = document.querySelector('.profile-header');
-            profileHeader.style.display = (pageId === 'youtube-tutorials-page' || pageId === 'developer-page') ? 'none' : 'flex';
+            profileHeader.style.display = (pageId === 'youtube-tutorials-page' || pageId === 'developer-page' || pageId === 'notifications-page') ? 'none' : 'flex';
 
             document.getElementById('super-task-list-view').style.display = 'block';
             document.getElementById('super-task-detail-view').style.display = 'none';
@@ -1007,6 +1017,7 @@
             if (pageId === 'premium-page') { renderPremiumPage(); }
             if (pageId === 'youtube-tutorials-page') { renderYoutubeTutorialsPage(); }
             if (pageId === 'developer-page') { renderDeveloperPage(); }
+            if (pageId === 'notifications-page') { renderNotificationsPage(); }
         };
 
         const setupNavigation = () => {
@@ -1018,7 +1029,7 @@
         const setupEventListeners = () => {
             themeToggleButton.addEventListener('click', toggleTheme);
             document.getElementById('developer-btn').addEventListener('click', () => navigateToPage('developer-page'));
-            document.getElementById('notification-btn').addEventListener('click', showNotificationPopup);
+            document.getElementById('notification-btn').addEventListener('click', () => navigateToPage('notifications-page'));
             
             popup.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('popup-close-btn') || e.target.id === 'popup') closePopup(); 
@@ -1306,10 +1317,8 @@
             const btn = document.getElementById(channel.btnId);
             tg.openLink(channel.url);
 
-            // Give user time to join, then enable a "check" state
             btn.textContent = 'চেক করুন';
             btn.onclick = () => {
-                // Here, we trust the user has joined. A true server-side check would require a bot.
                 localStorage.setItem(channel.checkName, 'true');
                 btn.style.backgroundColor = 'var(--success)';
                 btn.textContent = 'যোগদান করেছেন!';
@@ -1339,10 +1348,9 @@
                 return;
             }
             
-            // If all checks pass
             localStorage.setItem(`channelsJoined_${tgUser.id}`, 'true');
             closePopup();
-            continueInitApp(); // Proceed to load the main app
+            continueInitApp();
         };
 
         const renderYoutubeTutorialsPage = (searchTerm = '') => {
@@ -1419,7 +1427,7 @@
                         </div>
                     `).join('');
 
-                } else { // Today's Leaderboard
+                } else {
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
                     const todayTimestamp = today.getTime();

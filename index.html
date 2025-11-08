@@ -471,6 +471,41 @@
             script.async = true;
             document.body.appendChild(script);
         };
+        
+        const checkAndAwardReferralBonus = async () => {
+            if (!userState.referredBy || userState.referralBonusGiven) {
+                return;
+            }
+
+            const db = firebase.database();
+            const latestUserSnap = await db.ref(`users/${tgUser.id}`).once('value');
+            const latestUserData = latestUserSnap.val();
+
+            if (!latestUserData || latestUserData.referralBonusGiven) {
+                return; 
+            }
+
+            const regularTasksNeeded = appConfig.tasksForReferralBonus || 5;
+            const superTasksNeeded = appConfig.superTasksForReferralBonus || 1; 
+            
+            const regularTasksDone = latestUserData.regularTasksForReferral || 0;
+            const superTasksDone = latestUserData.superTasksForReferral || 0;
+
+            if (regularTasksDone >= regularTasksNeeded && superTasksDone >= superTasksNeeded) {
+                const bonusAmount = parseFloat(appConfig.referralBonus || 0);
+                
+                if (bonusAmount > 0) {
+                    const updates = {};
+                    updates[`users/${latestUserData.referredBy}/balance`] = firebase.database.ServerValue.increment(bonusAmount);
+                    updates[`users/${latestUserData.referredBy}/referrals`] = firebase.database.ServerValue.increment(1);
+                    updates[`users/${tgUser.id}/referralBonusGiven`] = true;
+                    
+                    await db.ref().update(updates);
+                    userState.referralBonusGiven = true;
+                }
+            }
+        };
+
 
         // Main App Initialization
         const initApp = async () => {
@@ -595,15 +630,13 @@
                     isPremium: false, 
                     isVerified: false, 
                     createdAt: firebase.database.ServerValue.TIMESTAMP,
-                    tasksCompletedForReferral: 0,
-                    referralBonusGiven: false
+                    referralBonusGiven: false,
+                    regularTasksForReferral: 0,
+                    superTasksForReferral: 0
                 };
                 await userRef.set(userData);
                 
-                if (referralId) {
-                    const referrerRef = db.ref(`users/${referralId}`);
-                    await referrerRef.child('referrals').set(firebase.database.ServerValue.increment(1));
-                }
+                // Referral count is now only incremented after tasks are completed
             }
             
             const today = new Date().toISOString().slice(0, 10);
@@ -800,14 +833,21 @@
                 referralsSnap.forEach(childSnap => {
                     const referredUser = childSnap.val();
                     count++;
-                    const tasksNeeded = appConfig.tasksForReferralBonus || 5;
                     const bonusReceived = referredUser.referralBonusGiven === true;
-                    const bonusText = bonusReceived ? `+${(appConfig.referralBonus || 0).toFixed(2)}` : `${referredUser.tasksCompletedForReferral || 0}/${tasksNeeded} কাজ`;
+                    let bonusText = '';
+                    if (bonusReceived) {
+                        bonusText = `+${(appConfig.referralBonus || 0).toFixed(2)}`;
+                    } else {
+                        const regularTasksNeeded = appConfig.tasksForReferralBonus || 5;
+                        const superTasksNeeded = appConfig.superTasksForReferralBonus || 1;
+                        bonusText = `কাজ: ${referredUser.regularTasksForReferral || 0}/${regularTasksNeeded}, সুপার: ${referredUser.superTasksForReferral || 0}/${superTasksNeeded}`;
+                    }
+
                     const bonusColor = bonusReceived ? 'var(--success)' : 'var(--pending)';
-                    referralHtml += `<div class="referral-list-item"><img src="${referredUser.photoUrl || 'https://via.placeholder.com/80'}" alt="User"><div class="info"><p>${referredUser.firstName || ''} ${referredUser.lastName || ''}</p></div><span class="bonus" style="color: ${bonusColor}; font-size: 0.9rem;">${bonusText}</span></div>`;
+                    referralHtml += `<div class="referral-list-item"><img src="${referredUser.photoUrl || 'https://via.placeholder.com/80'}" alt="User"><div class="info"><p>${referredUser.firstName || ''} ${referredUser.lastName || ''}</p></div><span class="bonus" style="color: ${bonusColor}; font-size: 0.8rem;">${bonusText}</span></div>`;
                 });
                 referralListContainer.innerHTML = referralHtml;
-                myReferralsCount.textContent = `Total: ${count}`;
+                myReferralsCount.textContent = `মোট: ${count}`;
             } else {
                 referralListContainer.innerHTML = '<p style="text-align:center; padding: 20px 0;">You haven\'t referred anyone yet.</p>';
                 myReferralsCount.textContent = 'Total: 0';
@@ -866,24 +906,16 @@
                     updates.breakUntil = Date.now() + (appConfig.breakDuration * 60000);
                     userState.breakUntil = updates.breakUntil;
                 }
+                
+                if (userState.referredBy && !userState.referralBonusGiven) {
+                    updates.regularTasksForReferral = firebase.database.ServerValue.increment(1);
+                }
+                
                 await userRef.update(updates);
                 
                 if (userState.referredBy && !userState.referralBonusGiven) {
-                    const tasksNeeded = appConfig.tasksForReferralBonus || 5;
-                    const newCount = (userState.tasksCompletedForReferral || 0) + 1;
-                    
-                    await userRef.child('tasksCompletedForReferral').set(newCount);
-                    userState.tasksCompletedForReferral = newCount;
-
-                    if (newCount >= tasksNeeded) {
-                        const referrerRef = db.ref(`users/${userState.referredBy}`);
-                        const bonusAmount = parseFloat(appConfig.referralBonus || 0);
-                        if (bonusAmount > 0) {
-                             await referrerRef.child('balance').set(firebase.database.ServerValue.increment(bonusAmount));
-                        }
-                        await userRef.child('referralBonusGiven').set(true);
-                        userState.referralBonusGiven = true;
-                    }
+                    userState.regularTasksForReferral = (userState.regularTasksForReferral || 0) + 1;
+                    await checkAndAwardReferralBonus();
                 }
                 
                 tg.HapticFeedback.notificationOccurred('success');
